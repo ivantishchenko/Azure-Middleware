@@ -24,6 +24,7 @@
     <target name="init" depends="clean">
     	<!-- Create  build directory  used for compilation -->
         <mkdir dir="${build.dir}"/>
+        <mkdir dir="${resources.dir}"/>
 	</target>
 	
 	<!-- Compile -->
@@ -42,7 +43,9 @@
         <mkdir dir="${dist.dir}"/>
 
         <!-- Copy resources to ${build.dir} -->
-        <copydir src="${resources.dir}" dest="${build.dir}"/>
+        <copy todir="${build.dir}" >
+            <fileset dir="${resources.dir}"/>
+        </copy>
 
         <!-- Manifest classpath -->
         <manifestclasspath property="manifest.classpath" jarfile="${jarfile}">
@@ -81,7 +84,9 @@
 	        <mkdir dir="${dist.dir}"/>
 
 			<!-- Copy resources to ${build.dir} -->
-	        <copydir src="${resources.dir}" dest="${build.dir}"/>
+            <copy todir="${build.dir}" >
+                <fileset dir="${resources.dir}"/>
+            </copy>
 
 	        <!-- Manifest classpath -->
 	        <manifestclasspath property="manifest.classpath" jarfile="${jarfile}">

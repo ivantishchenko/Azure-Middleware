@@ -16,19 +16,29 @@ public class RunMW {
 		// -----------------------------------------------------------------------------
 		// Parse and prepare arguments
 		// -----------------------------------------------------------------------------
-		System.out.println("Hello ASL 2017");
 		parseArguments(args);
 
 		// -----------------------------------------------------------------------------
 		// Start the Middleware
 		// -----------------------------------------------------------------------------
 
-		//new MyMiddleware(myIp, myPort, mcAddresses, numThreadsPTP, readSharded).run();
+		new MiddlewareMain(myIp, myPort, mcAddresses, numThreadsPTP, readSharded).run();
 
 	}
 
-	private static void printParams() {
-		
+	private static void printParams(Map<String, List<String>> params) {
+		for (Map.Entry<String, List<String>> entry : params.entrySet()) {
+			String paramName = entry.getKey();
+
+			List<String> paramList = entry.getValue();
+
+			String paramValues = "";
+			for (String val: paramList) {
+				paramValues += val + " ";
+			}
+
+			System.out.println(paramName + " | " + paramValues);
+		}
 	}
 	
 	private static void parseArguments(String[] args) {
@@ -94,6 +104,8 @@ public class RunMW {
 			printUsageWithError("Provide true/false to enable sharded reads!");
 			System.exit(1);
 		}
+
+		printParams(params);
 
 	}
 
