@@ -1,5 +1,8 @@
 package ch.ethz.asl.main;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -10,16 +13,22 @@ import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Worker extends Thread {
+    // Logging
+    private final static Logger log = LogManager.getLogger(Worker.class);
+
     // internal params
     public List<String> servers;
     public LinkedBlockingQueue<Request> jobQueue;
     public int serversNumber;
 
     // architecture
-    public Selector selector;
-    public List<SocketChannel> serverSocketChannels;
+    private Selector selector;
+    private List<SocketChannel> serverSocketChannels;
     private final int MESSAGE_SIZE = 8092;
     private ByteBuffer buffer = ByteBuffer.allocate(MESSAGE_SIZE);
+    // counter of jobs waiting for reply
+    private int responcesLeft;
+
 
 
     public Worker(LinkedBlockingQueue<Request> reqQueue, List<String> memCachedServers) {
@@ -31,6 +40,7 @@ public class Worker extends Thread {
         // architecture
         buffer = ByteBuffer.allocate(MESSAGE_SIZE);
         serverSocketChannels = new ArrayList<>();
+        responcesLeft = 0;
     }
 
     private void openServerConnections() throws IOException {
@@ -55,12 +65,14 @@ public class Worker extends Thread {
     }
 
     private void write(Request request) {
+        responcesLeft = 0;
+
         // take one Request from head of the queue
         try {
             // Replicate to all Servers
             for (SocketChannel serverChannel: serverSocketChannels) {
                 buffer.clear();
-                System.out.println("Going to send: " + new String(request.getRawMessage()));
+                System.out.println(Thread.currentThread().getId() + " Going to send: " + new String(request.getRawMessage()));
                 buffer.put(request.getRawMessage());
                 buffer.flip();
 
@@ -68,6 +80,9 @@ public class Worker extends Thread {
                     serverChannel.write(buffer);
                 }
                 buffer.clear();
+
+                // increase jobs counter
+                responcesLeft++;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -93,45 +108,50 @@ public class Worker extends Thread {
 
             System.out.println("Reply from SERVER: " + new String(message));
             buffer.clear();
-
+            // responded
+            responcesLeft--;
         }
+
+        String addr = channel.socket().getInetAddress().getHostAddress()+":"+ Integer.toString(channel.socket().getPort());
+        System.out.println("Reply from: " + addr);
+
     }
 
     @Override
     public void run() {
+        log.info("Worker #" + Thread.currentThread().getId() + " started");
+
         try {
             // open connections to servers
             openServerConnections();
 
             // busy wait for jobs
             while(true) {
-                // if there are some jobs left
-                // send the job to servers
-
-                // block until there are jobs
+                // block until there are jobs available
                 Request request = jobQueue.take();
                 // send a job to servers
                 write(request);
 
                 // block until there is something to read
+                // wait for
+                while ( responcesLeft > 0 ) {
+                    selector.select();
+                    Set<SelectionKey> keys = selector.selectedKeys();
+                    Iterator<SelectionKey> it = keys.iterator();
 
-                selector.select();
-                Set<SelectionKey> keys = selector.selectedKeys();
-                Iterator<SelectionKey> it = keys.iterator();
+                    while (it.hasNext()) {
 
-                while (it.hasNext()) {
+                        SelectionKey key = it.next();
+                        if (key.isReadable()) {
+                            // Channel is ready for reading
+                            read(key);
+                        }
+                        it.remove();
 
-                    SelectionKey key = it.next();
-                    if (key.isReadable()) {
-                        // Channel is ready for reading
-                        read(key);
                     }
-                    it.remove();
-
+                    // wait for responses from all servers
+                    // use a semaphore to check the completion of requests
                 }
-                // wait for responses from all servers
-                // use a semaphore to check the completion of requests
-
             }
 
         } catch (IOException e) {
@@ -142,20 +162,16 @@ public class Worker extends Thread {
 
     }
 
-//    @Deprecated
-//    private void printQueueForever() {
-//        while (true) {
-//            try {
-//                Thread.sleep(5000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//            System.out.println("RequestQueue is now. Thread # " + Thread.currentThread().getId());
-//            jobQueue.stream().forEach(x -> {
-//                System.out.println(x.getRequestMessage());
-//            });
-//
+//    private void printJobQueue() {
+//        try {
+//            Thread.sleep(5000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
 //        }
+//        System.out.println("RequestQueue is now. Thread # " + Thread.currentThread().getId());
+//        jobQueue.stream().forEach(x -> {
+//            System.out.println(x.getRequestMessage());
+//        });
 //    }
 
 

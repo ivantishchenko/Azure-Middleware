@@ -5,7 +5,7 @@ import java.util.*;
 public class RunMW {
 
 	static String myIp = null;
-	static int myPort = 8888;
+	static int myPort = 8080;
 	static List<String> mcAddresses = null;
 	static int numThreadsPTP = -1;
 	static boolean readSharded = false;
@@ -26,6 +26,7 @@ public class RunMW {
 
 	}
 
+	// outputs all params to Console
 	private static void printParams(Map<String, List<String>> params) {
 		for (Map.Entry<String, List<String>> entry : params.entrySet()) {
 			String paramName = entry.getKey();
@@ -105,7 +106,7 @@ public class RunMW {
 			System.exit(1);
 		}
 
-		printParams(params);
+		//printParams(params);
 
 	}
 

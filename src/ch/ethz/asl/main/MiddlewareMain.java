@@ -1,10 +1,16 @@
 package ch.ethz.asl.main;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class MiddlewareMain {
+    // Logging
+    private final static Logger log = LogManager.getLogger(MiddlewareMain.class);
+
     // command line args
     public String mwIP;
     public int mwPort;
@@ -32,15 +38,15 @@ public class MiddlewareMain {
     }
 
     public void run() {
+        log.info("Middleware Started");
+
         conManager.start();
-        System.out.println("Started MiddlewareMain");
 
         for (int i = 0; i < workersNumber; i++) {
             Worker worker = new Worker(requestQueue, memCachedServers);
             workers.add(worker);
 
             worker.start();
-            System.out.println("Started a worker");
         }
 
     }

@@ -1,50 +1,45 @@
-<project basedir="." default="jar" name="asl-fall17-project">
-
-	<description>Build file for the ASL 2017 Project</description>
-	<tstamp/>
-	
-	<!-- Global properties -->
+<project name="asl-fall17-project" default="jar" basedir=".">
+    <description>
+        ANT Build File for ASL Fall 2017 Project
+    </description>
+    <!-- set global properties for this build -->
     <property name="nethzid" value="tivan"/>
-    <property name="src.dir" location="src"/>
-    <property name="build.dir" location="build"/>
-    <property name="dist.dir" location="dist"/>
-    <property name="lib.dir" value="lib"/>
-    <property name="resources.dir" value="resources"/>
-	<property name="jarfile" value="${dist.dir}/Middleware-${DSTAMP}.jar"/>
-	
-	<!-- Classpath (add dependencies)-->
+    <property name="src" location="src"/>
+    <property name="build" location="build"/>
+    <property name="dist" location="dist"/>
+    <property name="lib" value="lib"/>
+    <property name="resources" value="resources"/>
+    <property name="jarfile" value="${dist}/middleware-${nethzid}.jar"/>
+
+    <!-- Dependencies-->
     <path id="my-classpath">
-        <fileset dir="${lib.dir}">
+        <fileset dir="${lib}">
             <include name="log4j-api-2.9.1.jar"/>
             <include name="log4j-core-2.9.1.jar"/>
         </fileset>
-	</path>
-	
-	<!-- Init -->
-    <target name="init" depends="clean">
-    	<!-- Create  build directory  used for compilation -->
-        <mkdir dir="${build.dir}"/>
-        <mkdir dir="${resources.dir}"/>
-	</target>
-	
-	<!-- Compile -->
+    </path>
+
+    <target name="init">
+        <tstamp/>
+        <mkdir dir="${build}"/>
+        <mkdir dir="${resources}"/>
+    </target>
+
+
     <target name="compile" depends="init" description="compile the source">
-    	<!-- Compile java code sources from ${src} to ${build} -->
-    	<javac srcdir="${src.dir}" destdir="${build.dir}" target="1.8" source="1.8" includeantruntime="false">
+        <!-- Compile the java code from ${src} into ${build} -->
+        <javac srcdir="${src}" destdir="${build}" includeantruntime="false" >
             <classpath refid="my-classpath"/>
-            <exclude name="test/**/"/>
         </javac>
-	</target>
+    </target>
 
-	<!-- Distribute -->
-    <target name="dist" depends="compile" description="generate the distribution">
-
-    	<!-- Create distribution dir -->
-        <mkdir dir="${dist.dir}"/>
+    <target name="jar" depends="compile" description="generate the distribution">
+        <!-- Create the distribution directory -->
+        <mkdir dir="${dist}"/>
 
         <!-- Copy resources to ${build.dir} -->
-        <copy todir="${build.dir}" >
-            <fileset dir="${resources.dir}"/>
+        <copy todir="${build}" >
+            <fileset dir="${resources}"/>
         </copy>
 
         <!-- Manifest classpath -->
@@ -52,55 +47,21 @@
             <classpath refid="my-classpath"/>
         </manifestclasspath>
 
-        <!-- Put compiled Java classes from ${build} into single JAR -->
-        <jar jarfile="${jarfile}" basedir="${build.dir}">
+        <!-- Put everything in ${build} into the jar file -->
+        <jar jarfile="${jarfile}" basedir="${build}" compress="true">
+            <fileset dir="${src}" includes="**/*.java"/>
             <manifest>
-                <attribute name="Created-By" value="${ant.java.version}"/>
                 <attribute name="Main-Class" value="ch.ethz.asl.main.RunMW"/>
                 <attribute name="Class-Path" value="${manifest.classpath}"/>
             </manifest>
-            <zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />
         </jar>
-	</target>
-	
-	<!-- Run -->
-	<target name="run" depends="dist" description="run the application">
-	        <!-- Run the app -->
-	        <java jar="${jarfile}" fork="true"/>
-	</target>
-	
-	<!-- Clean -->
+    </target>
+
     <target name="clean"
             description="clean up">
-        <!-- Remove ${build} and ${dist} dirs -->
-        <delete dir="${build.dir}"/>
-        <delete dir="${dist.dir}"/>
-	</target>
-	
-	<!-- Make jar, include sources. Use for final or debug-->
-	<target name="jar" depends="compile" description="generate the distribution">
-		
-	        <!-- Create distribution dir -->
-	        <mkdir dir="${dist.dir}"/>
-
-			<!-- Copy resources to ${build.dir} -->
-            <copy todir="${build.dir}" >
-                <fileset dir="${resources.dir}"/>
-            </copy>
-
-	        <!-- Manifest classpath -->
-	        <manifestclasspath property="manifest.classpath" jarfile="${jarfile}">
-	            <classpath refid="my-classpath"/>
-	        </manifestclasspath>
-
-			<!-- Put compiled Java classes from ${build} into single JAR -->
-	        <jar jarfile="${dist.dir}/middleware-${nethzid}.jar" basedir="${build.dir}" compress="true">
-	            <fileset dir="${src.dir}" includes="**/*.java"/>
-	            <manifest>
-	                <attribute name="Main-Class" value="ch.ethz.asl.main.RunMW"/>
-	                <attribute name="Class-Path" value="${manifest.classpath}"/>
-	            </manifest>
-	        </jar>
-	</target>
-	
+        <!-- Delete the ${build} and ${dist} directory trees -->
+        <delete dir="${build}"/>
+        <delete dir="${dist}"/>
+    </target>
 </project>
+

@@ -10,9 +10,13 @@ public class Request {
     // raw material
     private byte[] rawMessage;
 
+    // unaswered responces
+    private int responcesLeft;
+
     public Request(SocketChannel chan, byte[] msg) {
         requestChan = chan;
         rawMessage = msg;
+        responcesLeft = 0;
     }
 
     public Request(SocketChannel chan, String msg) {
@@ -30,5 +34,13 @@ public class Request {
 
     public byte[] getRawMessage() {
         return rawMessage;
+    }
+
+    public int getResponcesLeft() {
+        return responcesLeft;
+    }
+
+    public void setResponcesLeft(int responcesLeft) {
+        this.responcesLeft = responcesLeft;
     }
 }
