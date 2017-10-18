@@ -108,8 +108,22 @@ public class NetThread extends Thread {
 
             // creare Request object and queue it
             Request request = new Request(channel, message);
+            // parse request
+            parseRequest(request);
+
             requestQueue.add(request);
         }
+    }
+
+    private void parseRequest(Request req) {
+        String operation = new String(req.getRawMessage()).split(" ")[0].toLowerCase();
+
+        if (operation.equals("set")) {
+            req.setType(Request.RequestType.SET);
+        } else if (operation.equals("get") || operation.equals("gets")) {
+            req.setType(Request.RequestType.GET);
+        }
+
     }
 
 }

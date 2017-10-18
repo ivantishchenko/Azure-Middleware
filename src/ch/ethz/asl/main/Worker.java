@@ -141,7 +141,12 @@ public class Worker extends Thread {
                 // blocking method
                 Request request = jobQueue.take();
                 // send a job to servers
-                write(request);
+
+                if(request.getType() == Request.RequestType.SET) {
+                    write(request);
+                } else if (request.getType() == Request.RequestType.GET) {
+                    System.out.println("GET Requst");
+                }
 
                 // block until there is something to read
                 // wait for all responses
@@ -149,7 +154,6 @@ public class Worker extends Thread {
                     selector.select();
                     Set<SelectionKey> keys = selector.selectedKeys();
                     Iterator<SelectionKey> it = keys.iterator();
-
                     while (it.hasNext()) {
 
                         SelectionKey key = it.next();
