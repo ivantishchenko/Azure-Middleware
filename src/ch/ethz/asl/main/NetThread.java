@@ -1,5 +1,8 @@
 package ch.ethz.asl.main;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
@@ -15,6 +18,9 @@ import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class NetThread extends Thread {
+    // logging
+    private final static Logger log = LogManager.getLogger(NetThread.class);
+
     public static final int MESSAGE_SIZE = 1024;
     public Selector selector;
     public ByteBuffer buffer;
@@ -34,6 +40,7 @@ public class NetThread extends Thread {
 
     @Override
     public void run() {
+        log.info("NetThread started");
         try {
             serve();
         } catch (IOException e) {
@@ -78,11 +85,13 @@ public class NetThread extends Thread {
         SocketChannel channel = serverChannel.accept();
         channel.configureBlocking(false);
         channel.register(selector, SelectionKey.OP_READ);
-        System.out.println("accepted connection");
+        log.info("accepted connection");
     }
 
     private void read(SelectionKey key) throws IOException {
         SocketChannel channel = (SocketChannel) key.channel();
+
+        buffer.clear();
         int numBytesRead = channel.read(buffer);
         if (numBytesRead == -1) {
             // Client closed connecting

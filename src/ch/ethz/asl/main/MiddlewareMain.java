@@ -20,8 +20,8 @@ public class MiddlewareMain {
 
     // internal params
     public LinkedBlockingQueue<Request> requestQueue;
-    public NetThread conManager;
-    public List<Worker> workers;
+    public NetThread netThread;
+    public List<Worker> workersPool;
 
     public MiddlewareMain(String myIp, int myPort, List<String> mcAddresses, int numThreadsPTP, boolean readSharded) {
         // command line arguments
@@ -32,19 +32,20 @@ public class MiddlewareMain {
         sharedRead = readSharded;
 
         //internal params
-        requestQueue = new LinkedBlockingQueue<Request>();
-        conManager = new NetThread(requestQueue, myIp, myPort);
-        workers = new ArrayList<Worker>(workersNumber);
+        requestQueue = new LinkedBlockingQueue<>();
+        netThread = new NetThread(requestQueue, myIp, myPort);
+        workersPool = new ArrayList<>(workersNumber);
     }
 
     public void run() {
-        log.info("Middleware Started");
+        // start netThread
+        netThread.start();
 
-        conManager.start();
 
+        // start workers
         for (int i = 0; i < workersNumber; i++) {
             Worker worker = new Worker(requestQueue, memCachedServers);
-            workers.add(worker);
+            workersPool.add(worker);
 
             worker.start();
         }

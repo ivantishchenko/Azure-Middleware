@@ -25,10 +25,11 @@ public class Worker extends Thread {
     private Selector selector;
     private List<SocketChannel> serverSocketChannels;
     private final int MESSAGE_SIZE = 8092;
-    private ByteBuffer buffer = ByteBuffer.allocate(MESSAGE_SIZE);
+    private ByteBuffer buffer;
+    private ByteBuffer respBuffer;
     // counter of jobs waiting for reply
     private int responcesLeft;
-
+    private Set<ByteBuffer> serverResponces;
 
 
     public Worker(LinkedBlockingQueue<Request> reqQueue, List<String> memCachedServers) {
@@ -41,6 +42,7 @@ public class Worker extends Thread {
         buffer = ByteBuffer.allocate(MESSAGE_SIZE);
         serverSocketChannels = new ArrayList<>();
         responcesLeft = 0;
+        serverResponces = new HashSet<>();
     }
 
     private void openServerConnections() throws IOException {
@@ -72,7 +74,7 @@ public class Worker extends Thread {
             // Replicate to all Servers
             for (SocketChannel serverChannel: serverSocketChannels) {
                 buffer.clear();
-                System.out.println(Thread.currentThread().getId() + " Going to send: " + new String(request.getRawMessage()));
+                log.info(Thread.currentThread().getId() + " Going to send: " + new String(request.getRawMessage()));
                 buffer.put(request.getRawMessage());
                 buffer.flip();
 
@@ -91,7 +93,10 @@ public class Worker extends Thread {
 
     private void read(SelectionKey key) throws IOException {
         SocketChannel channel = (SocketChannel) key.channel();
+
+        buffer.clear();
         int numBytesRead = channel.read(buffer);
+
         if (numBytesRead == -1) {
             // Client closed connecting
             key.cancel();
@@ -99,21 +104,26 @@ public class Worker extends Thread {
             buffer.clear();
         } else {
 
-            if (numBytesRead == 0) System.out.println("Zero bytes read");
+            if (numBytesRead == 0)  log.error("Zero bytes read");
 
             // Convert to string
             byte[] message = new byte[numBytesRead];
             System.arraycopy(buffer.array(), 0, message, 0, numBytesRead);
 
 
-            System.out.println("Reply from SERVER: " + new String(message));
+            serverResponces.add(ByteBuffer.wrap(message));
+
+            log.info("Reply message: " + new String(message));
             buffer.clear();
             // responded
             responcesLeft--;
         }
 
+        // if all servers responded
+        // try to forward back to client
+
         String addr = channel.socket().getInetAddress().getHostAddress()+":"+ Integer.toString(channel.socket().getPort());
-        System.out.println("Reply from: " + addr);
+        log.info("Reply from: " + addr);
 
     }
 
@@ -128,12 +138,13 @@ public class Worker extends Thread {
             // busy wait for jobs
             while(true) {
                 // block until there are jobs available
+                // blocking method
                 Request request = jobQueue.take();
                 // send a job to servers
                 write(request);
 
                 // block until there is something to read
-                // wait for
+                // wait for all responses
                 while ( responcesLeft > 0 ) {
                     selector.select();
                     Set<SelectionKey> keys = selector.selectedKeys();
@@ -147,6 +158,22 @@ public class Worker extends Thread {
                             read(key);
                         }
                         it.remove();
+
+                        if ( responcesLeft == 0 ) {
+                            System.out.println("Set size: " + serverResponces.size());
+
+                            buffer.clear();
+                            buffer.put(serverResponces.iterator().next());
+                            buffer.flip();
+
+                            while (buffer.hasRemaining()) {
+                                request.getRequestChan().write(buffer);
+                            }
+
+                            buffer.clear();
+                            serverResponces.clear();
+
+                        }
 
                     }
                     // wait for responses from all servers
