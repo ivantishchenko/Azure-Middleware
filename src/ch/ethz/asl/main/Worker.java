@@ -26,13 +26,14 @@ public class Worker extends Thread {
     private List<SocketChannel> serverSocketChannels;
     private final int MESSAGE_SIZE = 8092;
     private ByteBuffer buffer;
-    private ByteBuffer respBuffer;
+
     // counter of jobs waiting for reply
-    private int responcesLeft;
-    private Set<ByteBuffer> serverResponces;
+    private int responsesLeft;
+    private Set<ByteBuffer> serverResponses;
+    private CycleCounter roundRobinCounter;
 
 
-    public Worker(LinkedBlockingQueue<Request> reqQueue, List<String> memCachedServers) {
+    public Worker(LinkedBlockingQueue<Request> reqQueue, CycleCounter counter, List<String> memCachedServers) {
         // params
         servers = memCachedServers;
         jobQueue = reqQueue;
@@ -41,8 +42,11 @@ public class Worker extends Thread {
         // architecture
         buffer = ByteBuffer.allocate(MESSAGE_SIZE);
         serverSocketChannels = new ArrayList<>();
-        responcesLeft = 0;
-        serverResponces = new HashSet<>();
+        responsesLeft = 0;
+        serverResponses = new HashSet<>();
+
+        // Round robin
+        roundRobinCounter = counter;
     }
 
     private void openServerConnections() throws IOException {
@@ -66,8 +70,32 @@ public class Worker extends Thread {
 
     }
 
-    private void write(Request request) {
-        responcesLeft = 0;
+    private void writeOne(Request request) {
+        responsesLeft = 0;
+
+        int serverIdx = roundRobinCounter.getCount();
+        SocketChannel serverChannel = serverSocketChannels.get(serverIdx);
+
+        buffer.clear();
+        log.info(Thread.currentThread().getId() + " Going to send: " + new String(request.getRawMessage()));
+        buffer.put(request.getRawMessage());
+        buffer.flip();
+
+        while (buffer.hasRemaining()) {
+            try {
+                serverChannel.write(buffer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        buffer.clear();
+
+        roundRobinCounter.increment();
+        responsesLeft++;
+    }
+
+    private void writeAll(Request request) {
+        responsesLeft = 0;
 
         // take one Request from head of the queue
         try {
@@ -84,7 +112,7 @@ public class Worker extends Thread {
                 buffer.clear();
 
                 // increase jobs counter
-                responcesLeft++;
+                responsesLeft++;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -111,12 +139,12 @@ public class Worker extends Thread {
             System.arraycopy(buffer.array(), 0, message, 0, numBytesRead);
 
 
-            serverResponces.add(ByteBuffer.wrap(message));
+            serverResponses.add(ByteBuffer.wrap(message));
 
             log.info("Reply message: " + new String(message));
             buffer.clear();
             // responded
-            responcesLeft--;
+            responsesLeft--;
         }
 
         // if all servers responded
@@ -126,6 +154,8 @@ public class Worker extends Thread {
         log.info("Reply from: " + addr);
 
     }
+
+
 
     @Override
     public void run() {
@@ -143,14 +173,15 @@ public class Worker extends Thread {
                 // send a job to servers
 
                 if(request.getType() == Request.RequestType.SET) {
-                    write(request);
-                } else if (request.getType() == Request.RequestType.GET) {
-                    System.out.println("GET Requst");
+                    writeAll(request);
+                }
+                else if (request.getType() == Request.RequestType.GET) {
+                    writeOne(request);
                 }
 
                 // block until there is something to read
                 // wait for all responses
-                while ( responcesLeft > 0 ) {
+                while ( responsesLeft > 0 ) {
                     selector.select();
                     Set<SelectionKey> keys = selector.selectedKeys();
                     Iterator<SelectionKey> it = keys.iterator();
@@ -163,11 +194,16 @@ public class Worker extends Thread {
                         }
                         it.remove();
 
-                        if ( responcesLeft == 0 ) {
-                            System.out.println("Set size: " + serverResponces.size());
+
+                        // reply to client
+                        if ( responsesLeft == 0 ) {
+                            System.out.println("Set size: " + serverResponses.size());
 
                             buffer.clear();
-                            buffer.put(serverResponces.iterator().next());
+                            // forward the first response to client
+
+
+                            buffer.put(InputValidator.getSingleResponse(serverResponses));
                             buffer.flip();
 
                             while (buffer.hasRemaining()) {
@@ -175,7 +211,7 @@ public class Worker extends Thread {
                             }
 
                             buffer.clear();
-                            serverResponces.clear();
+                            serverResponses.clear();
 
                         }
 

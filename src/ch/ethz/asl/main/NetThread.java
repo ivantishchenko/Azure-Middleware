@@ -10,10 +10,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -77,6 +74,7 @@ public class NetThread extends Thread {
 
             }
         }
+
     }
 
     private void accept(SelectionKey key) throws IOException {
@@ -108,22 +106,13 @@ public class NetThread extends Thread {
 
             // creare Request object and queue it
             Request request = new Request(channel, message);
-            // parse request
-            parseRequest(request);
+            // parse request GET SET
+            InputValidator.classifyRequest(request);
 
             requestQueue.add(request);
         }
     }
 
-    private void parseRequest(Request req) {
-        String operation = new String(req.getRawMessage()).split(" ")[0].toLowerCase();
 
-        if (operation.equals("set")) {
-            req.setType(Request.RequestType.SET);
-        } else if (operation.equals("get") || operation.equals("gets")) {
-            req.setType(Request.RequestType.GET);
-        }
-
-    }
 
 }

@@ -22,6 +22,7 @@ public class MiddlewareMain {
     public LinkedBlockingQueue<Request> requestQueue;
     public NetThread netThread;
     public List<Worker> workersPool;
+    public CycleCounter counterRR;
 
     public MiddlewareMain(String myIp, int myPort, List<String> mcAddresses, int numThreadsPTP, boolean readSharded) {
         // command line arguments
@@ -35,6 +36,10 @@ public class MiddlewareMain {
         requestQueue = new LinkedBlockingQueue<>();
         netThread = new NetThread(requestQueue, myIp, myPort);
         workersPool = new ArrayList<>(workersNumber);
+
+        //
+        System.out.println(memCachedServers.size());
+        counterRR = new CycleCounter(memCachedServers.size());
     }
 
     public void run() {
@@ -44,7 +49,7 @@ public class MiddlewareMain {
 
         // start workers
         for (int i = 0; i < workersNumber; i++) {
-            Worker worker = new Worker(requestQueue, memCachedServers);
+            Worker worker = new Worker(requestQueue, counterRR, memCachedServers);
             workersPool.add(worker);
 
             worker.start();
