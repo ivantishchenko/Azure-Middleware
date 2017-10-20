@@ -17,17 +17,15 @@ public class InputValidator {
         if ( serverResponses.size() == 1 ) {
             return out;
         }
-        // if more than 1 hunt for errors
-        else {
-            while (iter.hasNext()) {
-                out = iter.next();
-                String resp = new String(out.array());
-                if (resp.toLowerCase().contains("error")) {
-                    System.out.println("You have an error in responses: " + resp);
-                }
-                return out;
+
+        for (ByteBuffer buf: serverResponses) {
+            String resp = new String(out.array());
+            if (resp.toLowerCase().contains("error")) {
+                System.out.println("You have an error in responses: " + resp);
             }
+            return buf;
         }
+
         // if no errors but distinct responses send the last one
         return out;
     }

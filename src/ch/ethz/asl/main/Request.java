@@ -19,6 +19,9 @@ public class Request {
     // raw material
     private byte[] rawMessage;
 
+    public Request() {
+
+    }
 
     public Request(SocketChannel chan, byte[] msg) {
         requestChan = chan;
@@ -40,6 +43,10 @@ public class Request {
 
     public byte[] getRawMessage() {
         return rawMessage;
+    }
+
+    public void setRawMessage(byte[] rawMessage) {
+        this.rawMessage = rawMessage;
     }
 
     public RequestType getType() {
