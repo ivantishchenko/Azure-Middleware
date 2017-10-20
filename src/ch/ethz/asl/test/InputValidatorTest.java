@@ -27,11 +27,11 @@ public class InputValidatorTest {
         ByteBuffer error = ByteBuffer.wrap(new String("ERROR\\r\\n").getBytes());
         ByteBuffer stored = ByteBuffer.wrap(new String("STORED\\r\\n").getBytes());
 
-        serverResponses.add(error);
+        serverResponses.add(stored);
         serverResponses.add(stored);
         serverResponses.add(stored);
 
-        assertEquals(error, InputValidator.getSingleResponse(serverResponses));
+        assertEquals(stored, InputValidator.getSingleResponse(serverResponses));
 
     }
 
@@ -50,6 +50,14 @@ public class InputValidatorTest {
 
         InputValidator.classifyRequest(r);
         assertEquals(Request.RequestType.GET, r.getType());
+
+        // test MULTI GET
+        msg = new String("get mykey yourkey\\r").getBytes();
+        r.setRawMessage(msg);
+
+        InputValidator.classifyRequest(r);
+        assertEquals(Request.RequestType.MULTI_GET, r.getType());
+
     }
 
 }

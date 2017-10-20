@@ -172,11 +172,18 @@ public class Worker extends Thread {
                 Request request = jobQueue.take();
                 // send a job to servers
 
-                if(request.getType() == Request.RequestType.SET) {
-                    writeAll(request);
-                }
-                else if (request.getType() == Request.RequestType.GET) {
-                    writeOne(request);
+                switch (request.getType()) {
+                    case SET:
+                        writeAll(request);
+                        break;
+                    case GET:
+                        writeOne(request);
+                        break;
+                    case MULTI_GET:
+                        writeOne(request);
+                        break;
+                    default:
+                        break;
                 }
 
                 // block until there is something to read
@@ -228,18 +235,5 @@ public class Worker extends Thread {
         }
 
     }
-
-//    private void printJobQueue() {
-//        try {
-//            Thread.sleep(5000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        System.out.println("RequestQueue is now. Thread # " + Thread.currentThread().getId());
-//        jobQueue.stream().forEach(x -> {
-//            System.out.println(x.getRequestMessage());
-//        });
-//    }
-
 
 }
