@@ -1,5 +1,6 @@
 package ch.ethz.asl.main;
 
+import com.sun.org.apache.regexp.internal.RE;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,6 +33,10 @@ public class Worker extends Thread {
     private Set<ByteBuffer> serverResponses;
     private CycleCounter roundRobinCounter;
 
+    // arch 2
+    // maps server address to IDX
+    private HashMap<String, Integer> serverIdx;
+    private ArrayList<byte[]> sharedResponces;
 
     public Worker(LinkedBlockingQueue<Request> reqQueue, CycleCounter counter, List<String> memCachedServers) {
         // params
@@ -47,6 +52,16 @@ public class Worker extends Thread {
 
         // Round robin
         roundRobinCounter = counter;
+
+        // SHared get
+
+        serverIdx = new HashMap<String, Integer>();
+        sharedResponces = new ArrayList<>(serversNumber);
+
+        for ( int i = 0; i < serversNumber; i++) {
+            serverIdx.put(memCachedServers.get(i), i);
+            sharedResponces.add(i, "".getBytes());
+        }
     }
 
     private void openServerConnections() throws IOException {
@@ -119,7 +134,39 @@ public class Worker extends Thread {
         }
     }
 
-    private void read(SelectionKey key) throws IOException {
+    private void writeSplit(Request request, int serversNumber) {
+
+        ArrayList<byte[]> splitRequests = InputValidator.splitRequest(request, serversNumber);
+        responsesLeft = 0;
+
+        try {
+            // Replicate to all Servers
+            // Loop over non empty splits
+            for (int i = 0; i < splitRequests.size(); i++) {
+
+                byte[] out = splitRequests.get(i);
+                log.info(Thread.currentThread().getId() + " Going to send: " + new String(out));
+
+                buffer.clear();
+                buffer.put(out);
+                buffer.flip();
+
+                while (buffer.hasRemaining()) {
+                    serverSocketChannels.get(i).write(buffer);
+                }
+                buffer.clear();
+
+                // increase jobs counter
+                responsesLeft++;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void read(SelectionKey key, Request r) throws IOException {
         SocketChannel channel = (SocketChannel) key.channel();
 
         buffer.clear();
@@ -140,6 +187,14 @@ public class Worker extends Thread {
 
 
             serverResponses.add(ByteBuffer.wrap(message));
+
+            log.error("Weird responce " + new String(message));
+
+            if (MiddlewareMain.sharedRead && r.getType() == Request.RequestType.MULTI_GET) {
+                String addr = channel.socket().getInetAddress().getHostAddress()+":"+ Integer.toString(channel.socket().getPort());
+                int idx = serverIdx.get(addr);
+                sharedResponces.set(idx, message);
+            }
 
             log.info("Reply message: " + new String(message));
             buffer.clear();
@@ -180,7 +235,8 @@ public class Worker extends Thread {
                         writeOne(request);
                         break;
                     case MULTI_GET:
-                        writeOne(request);
+                        if (MiddlewareMain.sharedRead) writeSplit(request, serversNumber);
+                        else writeOne(request);
                         break;
                     default:
                         break;
@@ -197,20 +253,46 @@ public class Worker extends Thread {
                         SelectionKey key = it.next();
                         if (key.isReadable()) {
                             // Channel is ready for reading
-                            read(key);
+                            read(key, request);
                         }
                         it.remove();
 
 
                         // reply to client
                         if ( responsesLeft == 0 ) {
-                            System.out.println("Set size: " + serverResponses.size());
+                            //System.out.println("Set size: " + serverResponses.size());
 
                             buffer.clear();
                             // forward the first response to client
 
 
-                            buffer.put(InputValidator.getSingleResponse(serverResponses));
+                            switch (request.getType()) {
+                                case SET:
+                                    buffer.put(InputValidator.getSingleResponse(serverResponses));
+                                    break;
+                                case GET:
+                                    buffer.put(serverResponses.iterator().next());
+                                    break;
+                                case MULTI_GET:
+                                    if (MiddlewareMain.sharedRead) {
+                                        //byte[] out = InputValidator.combineSplits(serverResponses);
+                                        //buffer.put(out);
+                                        String test = new String(InputValidator.combineSplitResponses(sharedResponces));
+                                        log.error("Got weird reply : " + test);
+                                        buffer.put(InputValidator.combineSplitResponses(sharedResponces));
+                                    }
+                                    else buffer.put(serverResponses.iterator().next());
+                                    break;
+                                default:
+                                    break;
+                            }
+
+//                            if (MiddlewareMain.sharedRead && request.getType() == Request.RequestType.MULTI_GET) {
+//                                byte[] out = InputValidator.combineSplits(serverResponses);
+//                                buffer.put(out);
+//                            }
+//                            else buffer.put(InputValidator.getSingleResponse(serverResponses));
+
                             buffer.flip();
 
                             while (buffer.hasRemaining()) {

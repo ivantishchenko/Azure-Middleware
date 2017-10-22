@@ -16,7 +16,8 @@ public class MiddlewareMain {
     public int mwPort;
     public List<String> memCachedServers;
     public int workersNumber;
-    public boolean sharedRead;
+    public static boolean sharedRead;
+    public static int serversNum;
 
     // internal params
     public LinkedBlockingQueue<Request> requestQueue;
@@ -31,14 +32,13 @@ public class MiddlewareMain {
         memCachedServers = mcAddresses;
         workersNumber = numThreadsPTP;
         sharedRead = readSharded;
+        serversNum = memCachedServers.size();
 
         //internal params
         requestQueue = new LinkedBlockingQueue<>();
         netThread = new NetThread(requestQueue, myIp, myPort);
         workersPool = new ArrayList<>(workersNumber);
-
-        //
-        System.out.println(memCachedServers.size());
+        
         counterRR = new CycleCounter(memCachedServers.size());
     }
 

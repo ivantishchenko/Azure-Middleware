@@ -22,6 +22,13 @@ public class InputValidatorTest {
     }
 
     @Test
+    public void  testSplitParts() {
+        int[] res = InputValidator.splitParts(27, 5);
+        int[] out = {6,6,5,5,5};
+        assertArrayEquals(out, res);
+    }
+
+    @Test
     public void testGetSingleResponse() {
 
         ByteBuffer error = ByteBuffer.wrap(new String("ERROR\\r\\n").getBytes());
@@ -29,9 +36,9 @@ public class InputValidatorTest {
 
         serverResponses.add(stored);
         serverResponses.add(stored);
-        serverResponses.add(stored);
+        serverResponses.add(error);
 
-        assertEquals(stored, InputValidator.getSingleResponse(serverResponses));
+        assertEquals(error, InputValidator.getSingleResponse(serverResponses));
 
     }
 
