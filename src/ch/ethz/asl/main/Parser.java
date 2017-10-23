@@ -1,18 +1,14 @@
 package ch.ethz.asl.main;
 
-import com.sun.org.apache.regexp.internal.RE;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Array;
 import java.nio.ByteBuffer;
 import java.util.*;
 
-public class InputValidator {
+public class Parser {
     // Logging
-    private final static Logger log = LogManager.getLogger(InputValidator.class);
+    private final static Logger log = LogManager.getLogger(Parser.class);
 
     // returns an error if there is one, otherwise just normal reply
     public static ByteBuffer getSingleResponse(Set<ByteBuffer> serverResponses) {
@@ -31,7 +27,6 @@ public class InputValidator {
         return res;
     }
 
-    // TODO: Generate more sophisticated input validation
     // Classify request as GET SET
     public static void classifyRequest(Request req) {
         String[] msg = new String(req.getRawMessage()).split(" ");

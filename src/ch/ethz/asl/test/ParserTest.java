@@ -1,6 +1,6 @@
 package ch.ethz.asl.test;
 
-import ch.ethz.asl.main.InputValidator;
+import ch.ethz.asl.main.Parser;
 import ch.ethz.asl.main.Request;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.Set;
 
-public class InputValidatorTest {
+public class ParserTest {
 
     Request r;
     Set<ByteBuffer> serverResponses;
@@ -23,7 +23,7 @@ public class InputValidatorTest {
 
     @Test
     public void  testSplitParts() {
-        int[] res = InputValidator.splitParts(27, 5);
+        int[] res = Parser.splitParts(27, 5);
         int[] out = {6,6,5,5,5};
         assertArrayEquals(out, res);
     }
@@ -38,7 +38,7 @@ public class InputValidatorTest {
         serverResponses.add(stored);
         serverResponses.add(error);
 
-        assertEquals(error, InputValidator.getSingleResponse(serverResponses));
+        assertEquals(error, Parser.getSingleResponse(serverResponses));
 
     }
 
@@ -48,21 +48,21 @@ public class InputValidatorTest {
         byte[] msg = new String("set mykey 0 60 5\\r\\nhello\\r").getBytes();
         r.setRawMessage(msg);
 
-        InputValidator.classifyRequest(r);
+        Parser.classifyRequest(r);
         assertEquals(Request.RequestType.SET, r.getType());
 
         // Test GET
         msg = new String("get mykey\\r").getBytes();
         r.setRawMessage(msg);
 
-        InputValidator.classifyRequest(r);
+        Parser.classifyRequest(r);
         assertEquals(Request.RequestType.GET, r.getType());
 
         // test MULTI GET
         msg = new String("get mykey yourkey\\r").getBytes();
         r.setRawMessage(msg);
 
-        InputValidator.classifyRequest(r);
+        Parser.classifyRequest(r);
         assertEquals(Request.RequestType.MULTI_GET, r.getType());
 
     }

@@ -18,7 +18,7 @@ public class NetThread extends Thread {
     // logging
     private final static Logger log = LogManager.getLogger(NetThread.class);
 
-    public static final int MESSAGE_SIZE = 1024;
+    public static final int MESSAGE_SIZE = 4096;
     public Selector selector;
     public ByteBuffer buffer;
     public LinkedBlockingQueue<Request> requestQueue;
@@ -107,7 +107,7 @@ public class NetThread extends Thread {
             // creare Request object and queue it
             Request request = new Request(channel, message);
             // parse request GET SET
-            InputValidator.classifyRequest(request);
+            Parser.classifyRequest(request);
 
             requestQueue.add(request);
         }

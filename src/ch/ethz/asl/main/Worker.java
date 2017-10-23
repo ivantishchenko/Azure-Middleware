@@ -1,6 +1,5 @@
 package ch.ethz.asl.main;
 
-import com.sun.org.apache.regexp.internal.RE;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -136,7 +135,7 @@ public class Worker extends Thread {
 
     private void writeSplit(Request request, int serversNumber) {
 
-        ArrayList<byte[]> splitRequests = InputValidator.splitRequest(request, serversNumber);
+        ArrayList<byte[]> splitRequests = Parser.splitRequest(request, serversNumber);
         responsesLeft = 0;
 
         try {
@@ -188,7 +187,7 @@ public class Worker extends Thread {
 
             serverResponses.add(ByteBuffer.wrap(message));
 
-            log.error("Weird responce " + new String(message));
+            //log.error("Weird responce " + new String(message));
 
             if (MiddlewareMain.sharedRead && r.getType() == Request.RequestType.MULTI_GET) {
                 String addr = channel.socket().getInetAddress().getHostAddress()+":"+ Integer.toString(channel.socket().getPort());
@@ -268,30 +267,26 @@ public class Worker extends Thread {
 
                             switch (request.getType()) {
                                 case SET:
-                                    buffer.put(InputValidator.getSingleResponse(serverResponses));
+                                    buffer.put(Parser.getSingleResponse(serverResponses));
                                     break;
                                 case GET:
                                     buffer.put(serverResponses.iterator().next());
                                     break;
                                 case MULTI_GET:
                                     if (MiddlewareMain.sharedRead) {
-                                        //byte[] out = InputValidator.combineSplits(serverResponses);
-                                        //buffer.put(out);
-                                        String test = new String(InputValidator.combineSplitResponses(sharedResponces));
-                                        log.error("Got weird reply : " + test);
-                                        buffer.put(InputValidator.combineSplitResponses(sharedResponces));
+                                        byte[] out = Parser.combineSplitResponses(sharedResponces);
+                                        System.out.println(out.length);
+                                        buffer.put(out);
                                     }
-                                    else buffer.put(serverResponses.iterator().next());
+                                    else {
+                                        byte[] out = serverResponses.iterator().next().array();
+                                        System.out.println(out.length);
+                                        buffer.put(serverResponses.iterator().next());
+                                    }
                                     break;
                                 default:
                                     break;
                             }
-
-//                            if (MiddlewareMain.sharedRead && request.getType() == Request.RequestType.MULTI_GET) {
-//                                byte[] out = InputValidator.combineSplits(serverResponses);
-//                                buffer.put(out);
-//                            }
-//                            else buffer.put(InputValidator.getSingleResponse(serverResponses));
 
                             buffer.flip();
 
@@ -300,7 +295,12 @@ public class Worker extends Thread {
                             }
 
                             buffer.clear();
+
+                            // CLEAR RESPONSES AFTER GET!!!
                             serverResponses.clear();
+
+                            // shared responces clear!!!!
+                            for ( int i = 0; i < serversNumber; i++) sharedResponces.set(i, "".getBytes());
 
                         }
 
