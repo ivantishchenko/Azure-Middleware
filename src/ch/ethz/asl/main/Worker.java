@@ -14,7 +14,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class Worker extends Thread {
     // Logging
-    private final static Logger log = LogManager.getLogger(Worker.class);
+    private static final Logger log = LogManager.getLogger(Worker.class);
+    private static final Logger instrumentationLog = LogManager.getLogger("stat_file");
 
     // internal params
     public List<String> servers;
@@ -36,6 +37,13 @@ public class Worker extends Thread {
     // maps server address to IDX
     private HashMap<String, Integer> serverIdx;
     private ArrayList<byte[]> sharedResponces;
+
+    //unsupported operations
+    int invalidOperationCount;
+
+    //Instrumentation object
+    private Statistics statistics;
+    private String logName;
 
     public Worker(LinkedBlockingQueue<Request> reqQueue, CycleCounter counter, List<String> memCachedServers) {
         // params
@@ -61,6 +69,12 @@ public class Worker extends Thread {
             serverIdx.put(memCachedServers.get(i), i);
             sharedResponces.add(i, "".getBytes());
         }
+
+        // invalid request
+        invalidOperationCount = 0;
+
+        // Statitics
+        statistics = new Statistics();
     }
 
     private void openServerConnections() throws IOException {
@@ -213,29 +227,44 @@ public class Worker extends Thread {
 
     @Override
     public void run() {
-        log.info("Worker #" + Thread.currentThread().getId() + " started");
+        logName = Thread.currentThread().getName();
+        log.info(logName + " started");
+
+        // ISTRUMENTATION
+        doInstrumentation();
 
         try {
             // open connections to servers
             openServerConnections();
-
             // busy wait for jobs
             while(true) {
                 // block until there are jobs available
                 // blocking method
                 Request request = jobQueue.take();
+
+                //Instrumentation
+                statistics.setJobCount(statistics.getJobCount() + 1);
+                statistics.setQueueLength(jobQueue.size());
+
                 // send a job to servers
 
                 switch (request.getType()) {
                     case SET:
+                        statistics.setSETCount(statistics.getSETCount() + 1);
                         writeAll(request);
                         break;
                     case GET:
+                        statistics.setGETCount(statistics.getGETCount() + 1);
                         writeOne(request);
                         break;
                     case MULTI_GET:
+                        statistics.setMULTIGETCount(statistics.getMULTIGETCount() + 1);
                         if (MiddlewareMain.sharedRead) writeSplit(request, serversNumber);
                         else writeOne(request);
+                        break;
+                    case UNSUPPORTED:
+                        invalidOperationCount++;
+                        log.info("# of invalid operations: " + invalidOperationCount);
                         break;
                     default:
                         break;
@@ -275,12 +304,9 @@ public class Worker extends Thread {
                                 case MULTI_GET:
                                     if (MiddlewareMain.sharedRead) {
                                         byte[] out = Parser.combineSplitResponses(sharedResponces);
-                                        System.out.println(out.length);
                                         buffer.put(out);
                                     }
                                     else {
-                                        byte[] out = serverResponses.iterator().next().array();
-                                        System.out.println(out.length);
                                         buffer.put(serverResponses.iterator().next());
                                     }
                                     break;
@@ -308,6 +334,7 @@ public class Worker extends Thread {
                     // wait for responses from all servers
                     // use a semaphore to check the completion of requests
                 }
+
             }
 
         } catch (IOException e) {
@@ -316,6 +343,49 @@ public class Worker extends Thread {
             e.printStackTrace();
         }
 
+    }
+
+    private void doInstrumentation() {
+        int initialDelay = 0; // start after 2 seconds
+        int period = (int) (Statistics.testInterval * 1000);        // repeat every N seconds
+
+        Timer timer = new Timer();
+        TimerTask task = new TimerTask() {
+
+            int prevJobCount = 0;
+            int prevSETCount = 0;
+            int prevGETCount = 0;
+            int prevMULTIGETCount = 0;
+
+            public void run() {
+                // new job count - prev job count gives job count in the interval
+                double throughput = (statistics.getJobCount() - prevJobCount) / Statistics.testInterval;
+                int queueLength = statistics.getQueueLength();
+
+                int getCount = statistics.getGETCount() - prevGETCount;
+                int setCount = statistics.getSETCount() - prevSETCount;
+                int multiGetCount = statistics.getMULTIGETCount() - prevMULTIGETCount;
+
+                long queueWaitTime;
+                long serviceTime;
+
+                //instrumentationLog.info(String.format("%d %s %d", "hello", 1,2));
+                instrumentationLog.info(String.format("%s %f %d %d %d %d", logName, throughput , queueLength, setCount, getCount, multiGetCount));
+                //instrumentationLog.info("I am alive");
+
+                prevJobCount = statistics.getJobCount();
+
+                prevGETCount = statistics.getGETCount();
+                prevMULTIGETCount = statistics.getMULTIGETCount();
+                prevSETCount = statistics.getSETCount();
+            }
+        };
+
+        timer.scheduleAtFixedRate(task, initialDelay, period);
+    }
+
+    public Statistics getStatistics() {
+        return statistics;
     }
 
 }

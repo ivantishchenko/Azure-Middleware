@@ -5,11 +5,14 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class MiddlewareMain {
     // Logging
-    private final static Logger log = LogManager.getLogger(MiddlewareMain.class);
+    private static final Logger log = LogManager.getLogger(MiddlewareMain.class);
+    private static final Logger instrumentationLog = LogManager.getLogger("stat_file");
 
     // command line args
     public String mwIP;
@@ -44,15 +47,62 @@ public class MiddlewareMain {
 
     public void run() {
         // start netThread
+        netThread.setName("NetThread");
         netThread.start();
-
-
         // start workers
         for (int i = 0; i < workersNumber; i++) {
             Worker worker = new Worker(requestQueue, counterRR, memCachedServers);
+            worker.setName("Worker " + String.valueOf(i + 1));
             workersPool.add(worker);
 
             worker.start();
+        }
+
+        // instrumentation part
+        //doInstrumentation();
+        doKillHook();
+    }
+
+//    private void doInstrumentation() {
+//        int initialDelay = 2000; // start after 2 seconds
+//        int period = 3000;        // repeat every 5 seconds
+//
+//        Timer timer = new Timer();
+//        TimerTask task = new TimerTask() {
+//
+//            double prev;
+//            public void run() {
+//                //instrumentationLog.info(String.format("%d %s %d", "hello", 1,2));
+//
+//                double avgThroughput = 0;
+//
+//                for (Worker w: workersPool) avgThroughput += w.getStatistics().getThroughput();
+//                avgThroughput /= workersPool.size();
+//                instrumentationLog.info(String.format("%f %f %f", avgThroughput, 1.0 ,2.0));
+//
+//
+//                for (Worker w: workersPool) w.getStatistics().setJobCount(0);
+//            }
+//        };
+//
+//        timer.scheduleAtFixedRate(task, initialDelay, period);
+//    }
+
+    private void doKillHook() {
+        // hook statistics
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("Middleware shuts down...");
+            System.out.println("Final aggregates");
+
+            // Agregation
+        }));
+
+        while (true) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
     }

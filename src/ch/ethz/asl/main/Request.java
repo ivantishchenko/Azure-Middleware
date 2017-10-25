@@ -7,7 +7,7 @@ import java.nio.channels.SocketChannel;
 public class Request {
 
     public enum RequestType {
-        SET, GET, MULTI_GET
+        SET, GET, MULTI_GET, UNSUPPORTED
     }
 
     // type of request

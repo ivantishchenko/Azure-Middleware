@@ -22,8 +22,35 @@ public class RunMW {
 		// Start the Middleware
 		// -----------------------------------------------------------------------------
 
+		// check for specs deviations and cut it
+		specifiactionsCheck();
+
 		new MiddlewareMain(myIp, myPort, mcAddresses, numThreadsPTP, readSharded).run();
 
+//		// hook statistics
+//		Runtime.getRuntime().addShutdownHook(new Thread() {
+//			@Override
+//			public void run() {
+//				System.out.println("Triggered shutdown hook!");
+//			}
+//		});
+//
+//		while (true) {
+//			Thread.sleep(1000);
+//		}
+
+	}
+
+	private static void specifiactionsCheck() {
+		if (mcAddresses.size() > 3) {
+			printUsageWithError("Max # of servers is 3 (according to specification)");
+			System.exit(1);
+		}
+
+		if (numThreadsPTP > 128) {
+			printUsageWithError("Max # of threads is 128 (according to specification)");
+			System.exit(1);
+		}
 	}
 
 	// outputs all params to Console

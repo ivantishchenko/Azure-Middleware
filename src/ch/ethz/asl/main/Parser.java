@@ -27,8 +27,9 @@ public class Parser {
         return res;
     }
 
+    // returns zero if the request is supportet, otherwise -1
     // Classify request as GET SET
-    public static void classifyRequest(Request req) {
+    public static int classifyRequest(Request req) {
         String[] msg = new String(req.getRawMessage()).split(" ");
         String operation = msg[0].toLowerCase();
 
@@ -36,12 +37,16 @@ public class Parser {
 
         if (operation.equals("set")) {
             req.setType(Request.RequestType.SET);
+            return 0;
         } else if (operation.equals("get") || operation.equals("gets")) {
 
             if (msg.length > 2) req.setType(Request.RequestType.MULTI_GET);
             else req.setType(Request.RequestType.GET);
-
+            return 0;
         }
+
+        req.setType(Request.RequestType.UNSUPPORTED);
+        return -1;
     }
 
     // assuming the command is valid

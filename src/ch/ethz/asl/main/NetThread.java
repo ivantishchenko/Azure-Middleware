@@ -37,7 +37,7 @@ public class NetThread extends Thread {
 
     @Override
     public void run() {
-        log.info("NetThread started");
+        log.info(Thread.currentThread().getName() + " started");
         try {
             serve();
         } catch (IOException e) {
