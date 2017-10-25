@@ -243,6 +243,12 @@ public class Worker extends Thread {
                 Request request = jobQueue.take();
 
                 //Instrumentation
+                request.setLeaveQueueTime(System.nanoTime());
+                // store in miliseconds
+                request.setQueueWaitTime((request.getLeaveQueueTime() - request.getEnterQueueTime()) / 1000000);
+                //instrumentationLog.info("Job waited for: " + request.getQueueWaitTime());
+
+                statistics.setQueueWaitTime(statistics.getQueueWaitTime() + request.getQueueWaitTime());
                 statistics.setJobCount(statistics.getJobCount() + 1);
                 statistics.setQueueLength(jobQueue.size());
 
@@ -250,17 +256,17 @@ public class Worker extends Thread {
 
                 switch (request.getType()) {
                     case SET:
-                        statistics.setSETCount(statistics.getSETCount() + 1);
                         writeAll(request);
+                        statistics.setSETCount(statistics.getSETCount() + 1);
                         break;
                     case GET:
-                        statistics.setGETCount(statistics.getGETCount() + 1);
                         writeOne(request);
+                        statistics.setGETCount(statistics.getGETCount() + 1);
                         break;
                     case MULTI_GET:
-                        statistics.setMULTIGETCount(statistics.getMULTIGETCount() + 1);
                         if (MiddlewareMain.sharedRead) writeSplit(request, serversNumber);
                         else writeOne(request);
+                        statistics.setMULTIGETCount(statistics.getMULTIGETCount() + 1);
                         break;
                     case UNSUPPORTED:
                         invalidOperationCount++;
@@ -269,6 +275,7 @@ public class Worker extends Thread {
                     default:
                         break;
                 }
+                long startServiceTime = System.nanoTime();
 
                 // block until there is something to read
                 // wait for all responses
@@ -335,6 +342,9 @@ public class Worker extends Thread {
                     // use a semaphore to check the completion of requests
                 }
 
+                long serviceTime = (System.nanoTime() - startServiceTime ) / 1000000;
+                statistics.setServiceTime(statistics.getServiceTime() + serviceTime);
+
             }
 
         } catch (IOException e) {
@@ -346,7 +356,7 @@ public class Worker extends Thread {
     }
 
     private void doInstrumentation() {
-        int initialDelay = 0; // start after 2 seconds
+        int initialDelay = 1000; // start after 2 seconds
         int period = (int) (Statistics.testInterval * 1000);        // repeat every N seconds
 
         Timer timer = new Timer();
@@ -356,28 +366,36 @@ public class Worker extends Thread {
             int prevSETCount = 0;
             int prevGETCount = 0;
             int prevMULTIGETCount = 0;
+            long prevQueueWaitTime = 0;
+            long prevServiceTime = 0;
 
             public void run() {
+
                 // new job count - prev job count gives job count in the interval
-                double throughput = (statistics.getJobCount() - prevJobCount) / Statistics.testInterval;
-                int queueLength = statistics.getQueueLength();
+                int jobCount = (statistics.getJobCount() - prevJobCount);
 
-                int getCount = statistics.getGETCount() - prevGETCount;
-                int setCount = statistics.getSETCount() - prevSETCount;
-                int multiGetCount = statistics.getMULTIGETCount() - prevMULTIGETCount;
+                if (jobCount != 0 ) {
+                    double throughput = jobCount / Statistics.testInterval;
+                    int queueLength = statistics.getQueueLength();
+                    int getCount = statistics.getGETCount() - prevGETCount;
+                    int setCount = statistics.getSETCount() - prevSETCount;
+                    int multiGetCount = statistics.getMULTIGETCount() - prevMULTIGETCount;
 
-                long queueWaitTime;
-                long serviceTime;
+                    long queueWaitTime = (statistics.getQueueWaitTime() - prevQueueWaitTime) / jobCount;
+                    long serviceTime = (statistics.getServiceTime() - prevServiceTime) / jobCount;
 
-                //instrumentationLog.info(String.format("%d %s %d", "hello", 1,2));
-                instrumentationLog.info(String.format("%s %f %d %d %d %d", logName, throughput , queueLength, setCount, getCount, multiGetCount));
-                //instrumentationLog.info("I am alive");
+                    //instrumentationLog.info(String.format("%d %s %d", "hello", 1,2));
+                    instrumentationLog.info(String.format("%s,%f,%d,%d,%d,%d,%d,%d", logName, throughput , queueLength, queueWaitTime, serviceTime, setCount, getCount, multiGetCount));
+                    //instrumentationLog.info("I am alive");
 
-                prevJobCount = statistics.getJobCount();
+                    prevJobCount = jobCount;
+                    prevGETCount = getCount;
+                    prevMULTIGETCount = multiGetCount;
+                    prevSETCount = setCount;
+                    prevQueueWaitTime = queueWaitTime;
+                    prevServiceTime = serviceTime;
+                }
 
-                prevGETCount = statistics.getGETCount();
-                prevMULTIGETCount = statistics.getMULTIGETCount();
-                prevSETCount = statistics.getSETCount();
             }
         };
 

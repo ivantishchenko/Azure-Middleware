@@ -19,8 +19,15 @@ public class Request {
     // raw material
     private byte[] rawMessage;
 
-    public Request() {
+    // timing
+    private long enterQueueTime;
+    private long leaveQueueTime;
+    private long queueWaitTime;
 
+    public Request() {
+        enterQueueTime = 0;
+        leaveQueueTime = 0;
+        queueWaitTime = 0;
     }
 
     public Request(SocketChannel chan, byte[] msg) {
@@ -56,5 +63,30 @@ public class Request {
     public void setType(RequestType type) {
         this.type = type;
     }
+
+    public long getEnterQueueTime() {
+        return enterQueueTime;
+    }
+
+    public void setEnterQueueTime(long enterQueueTime) {
+        this.enterQueueTime = enterQueueTime;
+    }
+
+    public long getLeaveQueueTime() {
+        return leaveQueueTime;
+    }
+
+    public void setLeaveQueueTime(long leaveQueueTime) {
+        this.leaveQueueTime = leaveQueueTime;
+    }
+
+    public long getQueueWaitTime() {
+        return queueWaitTime;
+    }
+
+    public void setQueueWaitTime(long queueWaitTime) {
+        this.queueWaitTime = queueWaitTime;
+    }
+
 
 }
