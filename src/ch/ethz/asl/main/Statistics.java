@@ -3,15 +3,17 @@ package ch.ethz.asl.main;
 // Statistics object for instrumentation
 public class Statistics {
     // test interval in seconds
-    public final static double testInterval = 2;
+    public final static int testInterval = 2;
 
     private volatile int jobCount;
 
     // stats
-    private double throughput;
+    private int throughput;
     private volatile int queueLength;
+
     private long queueWaitTime;
     private long serviceTime;
+
     private int GETCount;
     private int SETCount;
     private int MULTIGETCount;
@@ -36,14 +38,14 @@ public class Statistics {
         this.jobCount = jobCount;
     }
 
-    public double getThroughput() {
+    public int getThroughput() {
 
         throughput = jobCount / testInterval;
 
         return throughput;
     }
 
-    public void setThroughput(double throughput) {
+    public void setThroughput(int throughput) {
         this.throughput = throughput;
     }
 

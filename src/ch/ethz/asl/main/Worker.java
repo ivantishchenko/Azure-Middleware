@@ -9,6 +9,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -245,7 +247,7 @@ public class Worker extends Thread {
                 //Instrumentation
                 request.setLeaveQueueTime(System.nanoTime());
                 // store in miliseconds
-                request.setQueueWaitTime((request.getLeaveQueueTime() - request.getEnterQueueTime()) / 1000000);
+                request.setQueueWaitTime(request.getLeaveQueueTime() - request.getEnterQueueTime());
                 //instrumentationLog.info("Job waited for: " + request.getQueueWaitTime());
 
                 statistics.setQueueWaitTime(statistics.getQueueWaitTime() + request.getQueueWaitTime());
@@ -335,15 +337,15 @@ public class Worker extends Thread {
                             // shared responces clear!!!!
                             for ( int i = 0; i < serversNumber; i++) sharedResponces.set(i, "".getBytes());
 
+
+                            long serviceTime = (System.nanoTime() - startServiceTime );
+                            statistics.setServiceTime(statistics.getServiceTime() + serviceTime);
                         }
 
                     }
                     // wait for responses from all servers
                     // use a semaphore to check the completion of requests
                 }
-
-                long serviceTime = (System.nanoTime() - startServiceTime ) / 1000000;
-                statistics.setServiceTime(statistics.getServiceTime() + serviceTime);
 
             }
 
@@ -360,47 +362,86 @@ public class Worker extends Thread {
         int period = (int) (Statistics.testInterval * 1000);        // repeat every N seconds
 
         Timer timer = new Timer();
-        TimerTask task = new TimerTask() {
 
-            int prevJobCount = 0;
-            int prevSETCount = 0;
-            int prevGETCount = 0;
-            int prevMULTIGETCount = 0;
-            long prevQueueWaitTime = 0;
-            long prevServiceTime = 0;
+        TimerTask task = new TimerTask() {
 
             public void run() {
 
                 // new job count - prev job count gives job count in the interval
-                int jobCount = (statistics.getJobCount() - prevJobCount);
+                int jobCount = statistics.getJobCount();
 
-                if (jobCount != 0 ) {
-                    double throughput = jobCount / Statistics.testInterval;
-                    int queueLength = statistics.getQueueLength();
-                    int getCount = statistics.getGETCount() - prevGETCount;
-                    int setCount = statistics.getSETCount() - prevSETCount;
-                    int multiGetCount = statistics.getMULTIGETCount() - prevMULTIGETCount;
+                int throughput = jobCount / Statistics.testInterval;
+                int queueLength = jobQueue.size();
+                int getCount = statistics.getGETCount();
+                int setCount = statistics.getSETCount();
+                int multiGetCount = statistics.getMULTIGETCount();
+                long queueWaitTime = statistics.getQueueWaitTime() / Math.max(jobCount, 1);
+                long serviceTime = statistics.getServiceTime() / Math.max(jobCount, 1);
 
-                    long queueWaitTime = (statistics.getQueueWaitTime() - prevQueueWaitTime) / jobCount;
-                    long serviceTime = (statistics.getServiceTime() - prevServiceTime) / jobCount;
 
-                    //instrumentationLog.info(String.format("%d %s %d", "hello", 1,2));
-                    instrumentationLog.info(String.format("%s,%f,%d,%d,%d,%d,%d,%d", logName, throughput , queueLength, queueWaitTime, serviceTime, setCount, getCount, multiGetCount));
-                    //instrumentationLog.info("I am alive");
+                instrumentationLog.info(String.format("%s,%d,%d,%d,%d,%d,%d,%d", logName, throughput , queueLength, queueWaitTime, serviceTime, setCount, getCount, multiGetCount));
+                //instrumentationLog.info(String.format("%s,%d,%d,%d,%d,%d,%d,%d", logName, throughput , queueLength, queueWaitTime, serviceTime, setCount, getCount, multiGetCount));
 
-                    prevJobCount = jobCount;
-                    prevGETCount = getCount;
-                    prevMULTIGETCount = multiGetCount;
-                    prevSETCount = setCount;
-                    prevQueueWaitTime = queueWaitTime;
-                    prevServiceTime = serviceTime;
+                synchronized (timer) {
+                    statistics.setJobCount(0);
+                    statistics.setGETCount(0);
+                    statistics.setSETCount(0);
+                    statistics.setMULTIGETCount(0);
+                    statistics.setQueueWaitTime(0);
+                    statistics.setServiceTime(0);
                 }
-
             }
         };
 
         timer.scheduleAtFixedRate(task, initialDelay, period);
     }
+
+//    private void doInstrumentation() {
+//        int initialDelay = 0; // start after 2 seconds
+//        int period = (int) (Statistics.testInterval * 1000);        // repeat every N seconds
+//
+//        Timer timer = new Timer();
+//        TimerTask task = new TimerTask() {
+//
+//            int prevJobCount = 0;
+//            int prevSETCount = 0;
+//            int prevGETCount = 0;
+//            int prevMULTIGETCount = 0;
+//            long prevQueueWaitTime = 0;
+//            long prevServiceTime = 0;
+//
+//            public void run() {
+//
+//                // new job count - prev job count gives job count in the interval
+//                int jobCount = (statistics.getJobCount() - prevJobCount);
+//
+//                if (jobCount != 0 ) {
+//                    double throughput = jobCount / Statistics.testInterval;
+//                    int queueLength = jobQueue.size();
+//                    int getCount = statistics.getGETCount() - prevGETCount;
+//                    int setCount = statistics.getSETCount() - prevSETCount;
+//                    int multiGetCount = statistics.getMULTIGETCount() - prevMULTIGETCount;
+//
+//                    long queueWaitTime = (statistics.getQueueWaitTime() - prevQueueWaitTime) / jobCount;
+//                    long serviceTime = (statistics.getServiceTime() - prevServiceTime) / jobCount;
+//
+//                    //instrumentationLog.info(String.format("%d %s %d", "hello", 1,2));
+//                    instrumentationLog.info(String.format("%s,%f,%d,%d,%d,%d,%d,%d", logName, throughput , queueLength, queueWaitTime, serviceTime, setCount, getCount, multiGetCount));
+//                    //instrumentationLog.info("I am alive");
+//
+//                    prevJobCount = jobCount;
+//                    prevGETCount = getCount;
+//                    prevMULTIGETCount = multiGetCount;
+//                    prevSETCount = setCount;
+//                    prevQueueWaitTime = queueWaitTime;
+//                    prevServiceTime = serviceTime;
+//                }
+//
+//            }
+//        };
+//
+//        timer.scheduleAtFixedRate(task, initialDelay, period);
+//    }
 
     public Statistics getStatistics() {
         return statistics;

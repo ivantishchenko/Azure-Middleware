@@ -2,11 +2,16 @@ package ch.ethz.asl.main;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.LoggerContext;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class MiddlewareMain {
@@ -60,42 +65,13 @@ public class MiddlewareMain {
 
         // instrumentation part
         //doInstrumentation();
-        doKillHook();
+
+        addKillHook();
     }
 
-//    private void doInstrumentation() {
-//        int initialDelay = 2000; // start after 2 seconds
-//        int period = 3000;        // repeat every 5 seconds
-//
-//        Timer timer = new Timer();
-//        TimerTask task = new TimerTask() {
-//
-//            double prev;
-//            public void run() {
-//                //instrumentationLog.info(String.format("%d %s %d", "hello", 1,2));
-//
-//                double avgThroughput = 0;
-//
-//                for (Worker w: workersPool) avgThroughput += w.getStatistics().getThroughput();
-//                avgThroughput /= workersPool.size();
-//                instrumentationLog.info(String.format("%f %f %f", avgThroughput, 1.0 ,2.0));
-//
-//
-//                for (Worker w: workersPool) w.getStatistics().setJobCount(0);
-//            }
-//        };
-//
-//        timer.scheduleAtFixedRate(task, initialDelay, period);
-//    }
-
-    private void doKillHook() {
+    private void addKillHook() {
         // hook statistics
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            System.out.println("Middleware shuts down...");
-            System.out.println("Final aggregates");
-
-            // Agregation
-        }));
+        Runtime.getRuntime().addShutdownHook(new ShutDownHook());
 
         while (true) {
             try {
