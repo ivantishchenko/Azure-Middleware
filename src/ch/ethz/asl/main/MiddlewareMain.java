@@ -71,16 +71,8 @@ public class MiddlewareMain {
 
     private void addKillHook() {
         // hook statistics
+        Thread hook = new ShutDownHook();
         Runtime.getRuntime().addShutdownHook(new ShutDownHook());
-
-        while (true) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
     }
 
 }

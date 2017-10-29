@@ -18,9 +18,21 @@ public class Statistics {
     private int SETCount;
     private int MULTIGETCount;
 
+    private String workerName;
+
+    public Statistics(String name, int throughput, int queueLength, long queueWaitTime, long serviceTime, int SETCount, int GETCount, int MULTIGETCount) {
+        this.workerName = name;
+        this.throughput = throughput;
+        this.queueLength = queueLength;
+        this.queueWaitTime = queueWaitTime;
+        this.serviceTime = serviceTime;
+        this.SETCount = SETCount;
+        this.GETCount = GETCount;
+        this.MULTIGETCount = MULTIGETCount;
+    }
+
     public Statistics() {
         jobCount = 0;
-
         throughput = 0;
         queueLength = 0;
         queueWaitTime = 0;
@@ -28,6 +40,14 @@ public class Statistics {
         GETCount = 0;
         SETCount = 0;
         MULTIGETCount = 0;
+    }
+
+    public String getWorkerName() {
+        return workerName;
+    }
+
+    public void setWorkerName(String workerName) {
+        this.workerName = workerName;
     }
 
     public int getJobCount() {
@@ -38,10 +58,14 @@ public class Statistics {
         this.jobCount = jobCount;
     }
 
-    public int getThroughput() {
+    public int getThroughputOverInterval() {
 
         throughput = jobCount / testInterval;
 
+        return throughput;
+    }
+
+    public int getThroughput() {
         return throughput;
     }
 

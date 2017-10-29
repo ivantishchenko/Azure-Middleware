@@ -366,7 +366,6 @@ public class Worker extends Thread {
         TimerTask task = new TimerTask() {
 
             public void run() {
-
                 // new job count - prev job count gives job count in the interval
                 int jobCount = statistics.getJobCount();
 
@@ -379,17 +378,21 @@ public class Worker extends Thread {
                 long serviceTime = statistics.getServiceTime() / Math.max(jobCount, 1);
 
 
-                instrumentationLog.info(String.format("%s,%d,%d,%d,%d,%d,%d,%d", logName, throughput , queueLength, queueWaitTime, serviceTime, setCount, getCount, multiGetCount));
-                //instrumentationLog.info(String.format("%s,%d,%d,%d,%d,%d,%d,%d", logName, throughput , queueLength, queueWaitTime, serviceTime, setCount, getCount, multiGetCount));
+                if ( jobCount != 0) {
+                    instrumentationLog.info(String.format("%s,%d,%d,%d,%d,%d,%d,%d", logName, throughput , queueLength, queueWaitTime, serviceTime, setCount, getCount, multiGetCount));
+                    //instrumentationLog.info(String.format("%s,%d,%d,%d,%d,%d,%d,%d", logName, throughput , queueLength, queueWaitTime, serviceTime, setCount, getCount, multiGetCount));
 
-                synchronized (timer) {
-                    statistics.setJobCount(0);
-                    statistics.setGETCount(0);
-                    statistics.setSETCount(0);
-                    statistics.setMULTIGETCount(0);
-                    statistics.setQueueWaitTime(0);
-                    statistics.setServiceTime(0);
+                    synchronized (timer) {
+                        statistics.setJobCount(0);
+                        statistics.setGETCount(0);
+                        statistics.setSETCount(0);
+                        statistics.setMULTIGETCount(0);
+                        statistics.setQueueWaitTime(0);
+                        statistics.setServiceTime(0);
+                    }
                 }
+
+
             }
         };
 
