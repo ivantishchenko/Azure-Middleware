@@ -1,0 +1,40 @@
+A1 servers, A2 clients, A4 MW
+
+A2 2 CPU, 3.5 RAM
+A4 8 CPU, 14 RAM
+A1 1 CPU, 1.75 RAM
+
+tivanforaslvms1.westeurope.cloudapp.azure.com A2
+tivanforaslvms2.westeurope.cloudapp.azure.com A2
+tivanforaslvms3.westeurope.cloudapp.azure.com A2
+
+tivanforaslvms4.westeurope.cloudapp.azure.com A4
+tivanforaslvms5.westeurope.cloudapp.azure.com A4
+
+tivanforaslvms6.westeurope.cloudapp.azure.com A1
+tivanforaslvms7.westeurope.cloudapp.azure.com A1
+tivanforaslvms8.westeurope.cloudapp.azure.com A1
+
+________________________________________________________
+
+BASELINE 1
+1. launch 3 VM A2(load generators CT2) launch 1 VM A1(servers)
+2. SSH and install memtier and memcached
+
+sudo apt-get install memcached git unzip ant openjdk-8-jdk
+wget https://github.com/ivantishchenko/memtier_benchmark/archive/master.zip
+unzip master.zip
+cd memtier_benchmark-master
+sudo apt-get install build-essential autoconf automake libpcre3-dev libevent-dev pkg-config zlib1g-dev
+autoreconf-ivf
+./configure
+make
+sudo service memcached stop
+
+3. run bash script
+4. collect results from client machines
+5. plot locally
+6. write short report
+
+BASELINE 2
+1. Launch 1 VM A2(load generator CT1), launch 2 VM A1(servers)
