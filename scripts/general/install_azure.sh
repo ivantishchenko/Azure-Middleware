@@ -10,3 +10,4 @@ autoreconf-ivf
 ./configure
 make
 sudo service memcached stop
+echo 'export PATH="~/memtier_benchmark-master:$PATH"' >> ~/.bashrc

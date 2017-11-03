@@ -19,6 +19,13 @@ ________________________________________________________
 
 BASELINE 1
 1. launch 3 VM A2(load generators CT2) launch 1 VM A1(servers)
+
+tivanforaslvms6
+
+tivanforaslvms1
+tivanforaslvms2
+tivanforaslvms3
+
 2. SSH and install memtier and memcached
 
 sudo apt-get install memcached git unzip ant openjdk-8-jdk
@@ -38,3 +45,15 @@ sudo service memcached stop
 
 BASELINE 2
 1. Launch 1 VM A2(load generator CT1), launch 2 VM A1(servers)
+
+tivanforaslvms6
+tivanforaslvms7
+
+tivanforaslvms3
+
+SOFTWARE INSTALLED: tivanforaslvms 1 2 3 6 7
+
+TODO:
+Do fork plot with separate machinese
+Do DSTAT TO SUPPORT CLAIMS
+Do PING to support claims
