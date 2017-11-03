@@ -29,10 +29,23 @@ ssh -f ${user}@${client2} "sh -c '${MKDIR_CMD} > /dev/null 2>&1 &'"
 ssh -f ${user}@${client3} "sh -c '${MKDIR_CMD} > /dev/null 2>&1 &'"
 
 
-
 ssh -f ${user}@${server1} "sh -c '${DSTAT_CMD} > /dev/null 2>&1 &'"
 ssh -f ${user}@${server2} "sh -c '${DSTAT_CMD} > /dev/null 2>&1 &'"
 
 ssh -f ${user}@${client1} "sh -c '${DSTAT_CMD} > /dev/null 2>&1 &'"
 ssh -f ${user}@${client2} "sh -c '${DSTAT_CMD} > /dev/null 2>&1 &'"
 ssh -f ${user}@${client3} "sh -c '${DSTAT_CMD} > /dev/null 2>&1 &'"
+
+
+PING_CMD1="ping ${server1} -c 10 >> ping_server1.log"
+PING_CMD2="ping ${server2} -c 10 >> ping_server2.log"
+
+ssh -f ${user}@${client1} "sh -c '${PING_CMD1} > /dev/null 2>&1 &'"
+ssh -f ${user}@${client2} "sh -c '${PING_CMD1} > /dev/null 2>&1 &'"
+ssh -f ${user}@${client3} "sh -c '${PING_CMD1} > /dev/null 2>&1 &'"
+
+sleep 3
+
+ssh -f ${user}@${client1} "sh -c '${PING_CMD2} > /dev/null 2>&1 &'"
+ssh -f ${user}@${client2} "sh -c '${PING_CMD2} > /dev/null 2>&1 &'"
+ssh -f ${user}@${client3} "sh -c '${PING_CMD2} > /dev/null 2>&1 &'"

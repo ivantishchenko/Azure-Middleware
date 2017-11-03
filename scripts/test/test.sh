@@ -18,8 +18,10 @@ echo $PATH
 #session2="server2"
 
 
+cmd1="ping google.com -c 10 >> google"
+cmd2="ping yahoo.com -c 10 >> yahoo"
 
-#ssh -f ${user}@${server} "sh -c '$cmd1 > /dev/null 2>&1 &'"
+ssh -f ${user}@${server} "sh -c '$cmd1; $cmd2 > /dev/null 2>&1 &'"
 #ssh -f ${user}@${server} "sh -c '$cmd1 > /dev/null 2>&1 &'"
 
 # CALL
