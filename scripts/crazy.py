@@ -14,38 +14,9 @@ RUN_TIME = 60
 # See the same in bash script
 # clients=`seq 1 4 33`
 CLIENTS_RANGE_BEG = 1
-CLIENTS_RANGE_END = 32
-CLIENTS_RANGE_STEP = 1
+CLIENTS_RANGE_END = 33
+CLIENTS_RANGE_STEP = 4
 
-# gets colums with thriuputs and response times
-'''
-def extractParams(logfile):
-    file = open(logfile, 'r')
-
-    throughput_col = []
-    response_time_col = []
-
-    for line in file:
-        # detect matches
-        match_throughput = re.search("\d+ \(avg:.* ops/sec", line)
-        match_response_time = re.search("\d+\.\d+ \(avg:.* msec", line)
-
-        # cut the value and add to list
-        if match_throughput is not None:
-            throughput_val = match_throughput.group().split(' ')[0]
-            throughput_col.append(float(throughput_val))
-
-        if match_response_time is not None:
-            response_time_val = match_response_time.group().split(' ')[0]
-            response_time_col.append(float(response_time_val))
-
-    file.close()
-
-    T = sum(throughput_col) / len(throughput_col)
-    R = sum(response_time_col) / len(response_time_col)
-
-    return float(T), float(R)
-'''
 
 def extractParams(logfile):
     file = open(logfile, 'r')
@@ -65,37 +36,34 @@ R_total = []
 T_STD = []
 R_STD = []
 
-POWER = 5
-
-OUT = [[],[],[]]
-
-for virtual_client in range(POWER + 1):
-    final_throughput = 0
-    final_response_time = 0
-    aggregate_throughput_vals = []
-    avg_response_time_vals = []
+for virtual_client in range(CLIENTS_RANGE_BEG, CLIENTS_RANGE_END + 1, CLIENTS_RANGE_STEP):
+    final_throughput = [0] * MACHINES_NUMBER
+    final_response_time = [0] * MACHINES_NUMBER
+    aggregate_throughput_vals1 = []
+    avg_response_time_vals1 = []
+    aggregate_throughput_vals2 = []
+    avg_response_time_vals2 = []
+    aggregate_throughput_vals3 = []
+    avg_response_time_vals3 = []
 
     for repetition in range(1, REP_NUMBER + 1):
-        aggregate_throughput = 0
-        avg_response_time = 0
 
         for machine in range(1, MACHINES_NUMBER + 1):
-            logfile_name = LOGFILES_PATH + "/baseline_{}_{}_{}.log".format(2**virtual_client, repetition, machine)
+            logfile_name = LOGFILES_PATH + "/baseline_{}_{}_{}.log".format(virtual_client, repetition, machine)
             #print(logfile_name)
             throughput, response = extractParams(logfile_name)
             # Agregates
             # SUM thriuputs
-            aggregate_throughput += throughput
+            final_throughput[machine - 1] += throughput
             # AVG response times
-            avg_response_time += response
+            final_response_time[machine - 1] += response
 
-        avg_response_time /= MACHINES_NUMBER
+        #avg_response_time /= MACHINES_NUMBER
         # at this point we have aggregates from all machines
-        final_throughput += aggregate_throughput
-        final_response_time += avg_response_time
 
-        aggregate_throughput_vals.append(aggregate_throughput)
-        avg_response_time_vals.append(avg_response_time)
+
+        aggregate_throughput_vals.append(final_throughput[0])
+        avg_response_time_vals.append(final_response_time[0])
 
     final_throughput /= REP_NUMBER
     final_response_time /= REP_NUMBER
@@ -111,9 +79,8 @@ for virtual_client in range(POWER + 1):
 #R_total = [x / 1000 for x in R_total]
 #R_STD = [x / 1000 for x in R_STD]
 
-clients = [(x**2) * THREAD_PER_CLIENT * MACHINES_NUMBER for x in range(POWER + 1)]
-ticks = [x * THREAD_PER_CLIENT * MACHINES_NUMBER for x in range(CLIENTS_RANGE_BEG, CLIENTS_RANGE_END + 1, CLIENTS_RANGE_STEP * 2)]
-
+clients = [x * THREAD_PER_CLIENT * MACHINES_NUMBER for x in range(CLIENTS_RANGE_BEG, CLIENTS_RANGE_END + 1, CLIENTS_RANGE_STEP)]
+ticks = [x * THREAD_PER_CLIENT * MACHINES_NUMBER for x in range(CLIENTS_RANGE_BEG, CLIENTS_RANGE_END + 1, CLIENTS_RANGE_STEP)]
 
 print(clients)
 print(T_total)
@@ -140,11 +107,3 @@ plt.grid()
 plt.xlabel('Clients')
 plt.ylabel('Response time')
 plt.show()
-
-#print(final_throughput)
-#print(final_response_time)
-
-#TODO: try to do box plot for all clients
-#T_col, R_col = extractParams(logfiles_path + "/baseline_28_1_1.log")
-#print(T_col)
-#print(R_col)

@@ -2,7 +2,7 @@
 
 cd ~ &&
 sudo apt-get update &&
-sudo apt-get install memcached git unzip ant &&
+sudo apt-get install memcached git unzip ant dstat &&
 wget https://github.com/ivantishchenko/memtier_benchmark/archive/master.zip &&
 unzip master.zip &&
 cd memtier_benchmark-master &&

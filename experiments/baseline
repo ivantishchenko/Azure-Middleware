@@ -27,17 +27,6 @@ tivanforaslvms2
 tivanforaslvms3
 
 2. SSH and install memtier and memcached
-
-sudo apt-get install memcached git unzip ant openjdk-8-jdk
-wget https://github.com/ivantishchenko/memtier_benchmark/archive/master.zip
-unzip master.zip
-cd memtier_benchmark-master
-sudo apt-get install build-essential autoconf automake libpcre3-dev libevent-dev pkg-config zlib1g-dev
-autoreconf-ivf
-./configure
-make
-sudo service memcached stop
-
 3. run bash script
 4. collect results from client machines
 5. plot locally
@@ -58,3 +47,4 @@ TAKEWAY:
 
 UPDATE ssh install script
 COPY YOUR KEYPAIR TO EVERY MACHINE
+REMOVE KNOWN_hosts before each run

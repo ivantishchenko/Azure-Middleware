@@ -14,8 +14,8 @@ RUN_TIME = 60
 # See the same in bash script
 # clients=`seq 1 4 33`
 CLIENTS_RANGE_BEG = 1
-CLIENTS_RANGE_END = 32
-CLIENTS_RANGE_STEP = 1
+CLIENTS_RANGE_END = 33
+CLIENTS_RANGE_STEP = 4
 
 # gets colums with thriuputs and response times
 '''
