@@ -370,6 +370,8 @@ public class Worker extends Thread {
                 int jobCount = statistics.getJobCount();
 
                 int throughput = jobCount / Statistics.testInterval;
+                int responseTime = 1 / throughput;
+
                 int queueLength = jobQueue.size();
                 int getCount = statistics.getGETCount();
                 int setCount = statistics.getSETCount();
@@ -379,7 +381,7 @@ public class Worker extends Thread {
 
 
                 if ( jobCount != 0) {
-                    instrumentationLog.info(String.format("%s,%d,%d,%d,%d,%d,%d,%d", logName, throughput , queueLength, queueWaitTime, serviceTime, setCount, getCount, multiGetCount));
+                    instrumentationLog.info(String.format("%s,%d,%d,%d,%d,%d,%d,%d,%d", logName, throughput , responseTime, queueLength, queueWaitTime, serviceTime, setCount, getCount, multiGetCount));
                     //instrumentationLog.info(String.format("%s,%d,%d,%d,%d,%d,%d,%d", logName, throughput , queueLength, queueWaitTime, serviceTime, setCount, getCount, multiGetCount));
 
                     synchronized (timer) {

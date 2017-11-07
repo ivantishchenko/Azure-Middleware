@@ -42,9 +42,10 @@ do
 		cmd2="${cmdpart} --server=${server} --port=${port} --test-time=${time} --clients=${c} --threads=${threads} --out-file=${LOG_FILE_DIR}/baseline_${c}_${rep}_2.log"
 		cmd3="${cmdpart} --server=${server} --port=${port} --test-time=${time} --clients=${c} --threads=${threads} --out-file=${LOG_FILE_DIR}/baseline_${c}_${rep}_3.log"
 
+
+        ssh tivan@tivanforaslvms3.westeurope.cloudapp.azure.com $cmd3 &
+        ssh tivan@tivanforaslvms2.westeurope.cloudapp.azure.com $cmd2 &
 		ssh tivan@tivanforaslvms1.westeurope.cloudapp.azure.com $cmd1 &
-		ssh tivan@tivanforaslvms2.westeurope.cloudapp.azure.com $cmd2 &
-		ssh tivan@tivanforaslvms3.westeurope.cloudapp.azure.com $cmd3 &
 
 		#eval $cmd1 &
 		#eval $cmd2 &

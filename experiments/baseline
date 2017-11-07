@@ -48,3 +48,18 @@ TAKEWAY:
 UPDATE ssh install script
 COPY YOUR KEYPAIR TO EVERY MACHINE
 REMOVE KNOWN_hosts before each run
+Install JAVA 8 sudo apt-get install default-jre sudo apt-get install default-jdk
+
+ping tivanforaslvms6.westeurope.cloudapp.azure.com -c 10 > ping1_6.log
+ping tivanforaslvms7.westeurope.cloudapp.azure.com -c 10 > ping1_7.log
+
+ping tivanforaslvms6.westeurope.cloudapp.azure.com -c 10 > ping2_6.log
+ping tivanforaslvms7.westeurope.cloudapp.azure.com -c 10 > ping2_7.log
+
+ping tivanforaslvms6.westeurope.cloudapp.azure.com -c 10 > ping3_6.log
+ping tivanforaslvms7.westeurope.cloudapp.azure.com -c 10 > ping3_7.log
+
+________________________________________________________________________
+SECOND REPETIOTION BASELINES
+Start 15:00
+Finish 17:10
