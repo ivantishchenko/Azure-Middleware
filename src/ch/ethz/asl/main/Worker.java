@@ -338,8 +338,11 @@ public class Worker extends Thread {
                             for ( int i = 0; i < serversNumber; i++) sharedResponces.set(i, "".getBytes());
 
 
-                            long serviceTime = (System.nanoTime() - startServiceTime );
+                            long endServiceTime = System.nanoTime();
+                            long serviceTime = endServiceTime - startServiceTime;
                             statistics.setServiceTime(statistics.getServiceTime() + serviceTime);
+                            // repsonse time histrogram
+                            statistics.addResponseTime(request.getEnterQueueTime() - endServiceTime);
                         }
 
                     }
@@ -358,7 +361,7 @@ public class Worker extends Thread {
     }
 
     private void doInstrumentation() {
-        int initialDelay = 1000; // start after 2 seconds
+        int initialDelay = 1000; // start after 1 second
         int period = (int) (Statistics.testInterval * 1000);        // repeat every N seconds
 
         Timer timer = new Timer();
@@ -370,7 +373,6 @@ public class Worker extends Thread {
                 int jobCount = statistics.getJobCount();
 
                 int throughput = jobCount / Statistics.testInterval;
-                int responseTime = 1 / throughput;
 
                 int queueLength = jobQueue.size();
                 int getCount = statistics.getGETCount();
@@ -381,7 +383,7 @@ public class Worker extends Thread {
 
 
                 if ( jobCount != 0) {
-                    instrumentationLog.info(String.format("%s,%d,%d,%d,%d,%d,%d,%d,%d", logName, throughput , responseTime, queueLength, queueWaitTime, serviceTime, setCount, getCount, multiGetCount));
+                    instrumentationLog.info(String.format("%s,%d,%d,%d,%d,%d,%d,%d", logName, throughput , queueLength, queueWaitTime, serviceTime, setCount, getCount, multiGetCount));
                     //instrumentationLog.info(String.format("%s,%d,%d,%d,%d,%d,%d,%d", logName, throughput , queueLength, queueWaitTime, serviceTime, setCount, getCount, multiGetCount));
 
                     synchronized (timer) {

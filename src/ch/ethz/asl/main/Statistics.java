@@ -1,9 +1,12 @@
 package ch.ethz.asl.main;
 
+import java.util.ArrayList;
+import java.util.List;
+
 // Statistics object for instrumentation
 public class Statistics {
     // test interval in seconds
-    public final static int testInterval = 2;
+    public final static int testInterval = 1;
 
     private volatile int jobCount;
 
@@ -19,8 +22,9 @@ public class Statistics {
     private int MULTIGETCount;
 
     private String workerName;
+    private List<Long> responseTimesList;
 
-    public Statistics(String name, int throughput, int queueLength, long queueWaitTime, long serviceTime, int SETCount, int GETCount, int MULTIGETCount) {
+    public Statistics(String name, int throughput, int queueLength, long queueWaitTime, long serviceTime, int SETCount, int GETCount, int MULTIGETCount, List<Long> times) {
         this.workerName = name;
         this.throughput = throughput;
         this.queueLength = queueLength;
@@ -29,6 +33,7 @@ public class Statistics {
         this.SETCount = SETCount;
         this.GETCount = GETCount;
         this.MULTIGETCount = MULTIGETCount;
+        this.responseTimesList = times;
     }
 
     public Statistics() {
@@ -40,6 +45,19 @@ public class Statistics {
         GETCount = 0;
         SETCount = 0;
         MULTIGETCount = 0;
+        responseTimesList = new ArrayList<>();
+    }
+
+    public void addResponseTime(Long val) {
+        responseTimesList.add(val);
+    }
+
+    public List<Long> getResponseTimesList() {
+        return responseTimesList;
+    }
+
+    public void setResponseTimesList(List<Long> responseTimesList) {
+        this.responseTimesList = responseTimesList;
     }
 
     public String getWorkerName() {

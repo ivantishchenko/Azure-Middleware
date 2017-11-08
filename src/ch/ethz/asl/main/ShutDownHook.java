@@ -38,11 +38,12 @@ public class ShutDownHook extends Thread{
 
             // Agregation
             final String fileName = prop.getProperty("appender.STAT_FILE.fileName");
-
             String content = new String(Files.readAllBytes(Paths.get(fileName)));
-            String[] lines = content.split("\r\n|\r|\n");
 
+            String[] lines = content.split("\r\n|\r|\n");
             String[] stats = Arrays.copyOfRange(lines, 1, lines.length);
+
+            // STATISTICS LINES
 
             List<Statistics> statsList = Arrays.stream(stats).map(x -> {
                 String[] values = x.split(",");
@@ -56,7 +57,7 @@ public class ShutDownHook extends Thread{
                 int set = Integer.parseInt(values[6]);
                 int multiget= Integer.parseInt(values[7]);
 
-                Statistics s = new Statistics(name, t, len, wait, serve, get, set, multiget);
+                Statistics s = new Statistics(name, t, len, wait, serve, get, set, multiget, null);
                 return s;
             }).collect(Collectors.toList());
 
