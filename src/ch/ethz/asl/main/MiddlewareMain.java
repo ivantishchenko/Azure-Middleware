@@ -71,8 +71,8 @@ public class MiddlewareMain {
 
     private void addKillHook() {
         // hook statistics
-        Thread hook = new ShutDownHook();
-        Runtime.getRuntime().addShutdownHook(new ShutDownHook());
+        Thread hook = new ShutDownHook(workersPool);
+        Runtime.getRuntime().addShutdownHook(hook);
     }
 
 }

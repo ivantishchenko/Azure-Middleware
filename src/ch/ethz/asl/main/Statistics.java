@@ -24,6 +24,20 @@ public class Statistics {
     private String workerName;
     private List<Long> responseTimesList;
 
+    private long latency;
+
+    public Statistics(String name, int throughput, int queueLength, long queueWaitTime, long serviceTime, int SETCount, int GETCount, int MULTIGETCount, long latency) {
+        this.workerName = name;
+        this.throughput = throughput;
+        this.queueLength = queueLength;
+        this.queueWaitTime = queueWaitTime;
+        this.serviceTime = serviceTime;
+        this.SETCount = SETCount;
+        this.GETCount = GETCount;
+        this.MULTIGETCount = MULTIGETCount;
+        this.latency = latency;
+    }
+
     public Statistics(String name, int throughput, int queueLength, long queueWaitTime, long serviceTime, int SETCount, int GETCount, int MULTIGETCount, List<Long> times) {
         this.workerName = name;
         this.throughput = throughput;
@@ -45,8 +59,18 @@ public class Statistics {
         GETCount = 0;
         SETCount = 0;
         MULTIGETCount = 0;
+        latency = 0;
         responseTimesList = new ArrayList<>();
     }
+
+    public long getLatency() {
+        return latency;
+    }
+
+    public void setLatency(long latency) {
+        this.latency = latency;
+    }
+
 
     public void addResponseTime(Long val) {
         responseTimesList.add(val);

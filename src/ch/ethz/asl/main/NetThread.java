@@ -108,10 +108,17 @@ public class NetThread extends Thread {
             Request request = new Request(channel, message);
             // parse request GET SET
             Parser.classifyRequest(request);
-            requestQueue.add(request);
+
 
             // instrumentation Time entered the queue
             request.setEnterQueueTime(System.nanoTime());
+            //requestQueue.add(request);
+            try {
+                requestQueue.put(request);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 

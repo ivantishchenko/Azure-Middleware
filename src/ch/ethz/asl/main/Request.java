@@ -20,9 +20,9 @@ public class Request {
     private byte[] rawMessage;
 
     // timing
-    private long enterQueueTime;
-    private long leaveQueueTime;
-    private long queueWaitTime;
+    private volatile long enterQueueTime;
+    private volatile long leaveQueueTime;
+    private volatile long queueWaitTime;
 
     public Request() {
         enterQueueTime = 0;

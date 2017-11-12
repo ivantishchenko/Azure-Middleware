@@ -297,8 +297,9 @@ public class Worker extends Thread {
 
                         // reply to client
                         if ( responsesLeft == 0 ) {
-                            //System.out.println("Set size: " + serverResponses.size());
 
+                            long endServiceTime = System.nanoTime();
+                            //System.out.println("Set size: " + serverResponses.size());
                             buffer.clear();
                             // forward the first response to client
 
@@ -333,22 +334,27 @@ public class Worker extends Thread {
 
                             // CLEAR RESPONSES AFTER GET!!!
                             serverResponses.clear();
-
                             // shared responces clear!!!!
-                            for ( int i = 0; i < serversNumber; i++) sharedResponces.set(i, "".getBytes());
+                            if (MiddlewareMain.sharedRead && request.getType() == Request.RequestType.MULTI_GET) {
+                                for (int i = 0; i < serversNumber; i++) sharedResponces.set(i, "".getBytes());
+                            }
 
-
-                            long endServiceTime = System.nanoTime();
+                            // instrumentation
                             long serviceTime = endServiceTime - startServiceTime;
                             statistics.setServiceTime(statistics.getServiceTime() + serviceTime);
                             // repsonse time histrogram
-                            statistics.addResponseTime(request.getEnterQueueTime() - endServiceTime);
                         }
 
                     }
                     // wait for responses from all servers
                     // use a semaphore to check the completion of requests
                 }
+
+                long sendBackClientTime = System.nanoTime();
+                long responseTime = sendBackClientTime - request.getEnterQueueTime();
+
+                statistics.addResponseTime(responseTime);
+                statistics.setLatency(statistics.getLatency() + responseTime);
 
             }
 
@@ -380,10 +386,11 @@ public class Worker extends Thread {
                 int multiGetCount = statistics.getMULTIGETCount();
                 long queueWaitTime = statistics.getQueueWaitTime() / Math.max(jobCount, 1);
                 long serviceTime = statistics.getServiceTime() / Math.max(jobCount, 1);
-
+                long latency = statistics.getLatency() / Math.max(jobCount, 1);
+                // to msec
 
                 if ( jobCount != 0) {
-                    instrumentationLog.info(String.format("%s,%d,%d,%d,%d,%d,%d,%d", logName, throughput , queueLength, queueWaitTime, serviceTime, setCount, getCount, multiGetCount));
+                    instrumentationLog.info(String.format("%s,%d,%d,%d,%d,%d,%d,%d,%d", logName, throughput , queueLength, queueWaitTime, serviceTime, setCount, getCount, multiGetCount, latency));
                     //instrumentationLog.info(String.format("%s,%d,%d,%d,%d,%d,%d,%d", logName, throughput , queueLength, queueWaitTime, serviceTime, setCount, getCount, multiGetCount));
 
                     synchronized (timer) {
@@ -393,6 +400,7 @@ public class Worker extends Thread {
                         statistics.setMULTIGETCount(0);
                         statistics.setQueueWaitTime(0);
                         statistics.setServiceTime(0);
+                        statistics.setLatency(0);
                     }
                 }
 
@@ -402,53 +410,6 @@ public class Worker extends Thread {
 
         timer.scheduleAtFixedRate(task, initialDelay, period);
     }
-
-//    private void doInstrumentation() {
-//        int initialDelay = 0; // start after 2 seconds
-//        int period = (int) (Statistics.testInterval * 1000);        // repeat every N seconds
-//
-//        Timer timer = new Timer();
-//        TimerTask task = new TimerTask() {
-//
-//            int prevJobCount = 0;
-//            int prevSETCount = 0;
-//            int prevGETCount = 0;
-//            int prevMULTIGETCount = 0;
-//            long prevQueueWaitTime = 0;
-//            long prevServiceTime = 0;
-//
-//            public void run() {
-//
-//                // new job count - prev job count gives job count in the interval
-//                int jobCount = (statistics.getJobCount() - prevJobCount);
-//
-//                if (jobCount != 0 ) {
-//                    double throughput = jobCount / Statistics.testInterval;
-//                    int queueLength = jobQueue.size();
-//                    int getCount = statistics.getGETCount() - prevGETCount;
-//                    int setCount = statistics.getSETCount() - prevSETCount;
-//                    int multiGetCount = statistics.getMULTIGETCount() - prevMULTIGETCount;
-//
-//                    long queueWaitTime = (statistics.getQueueWaitTime() - prevQueueWaitTime) / jobCount;
-//                    long serviceTime = (statistics.getServiceTime() - prevServiceTime) / jobCount;
-//
-//                    //instrumentationLog.info(String.format("%d %s %d", "hello", 1,2));
-//                    instrumentationLog.info(String.format("%s,%f,%d,%d,%d,%d,%d,%d", logName, throughput , queueLength, queueWaitTime, serviceTime, setCount, getCount, multiGetCount));
-//                    //instrumentationLog.info("I am alive");
-//
-//                    prevJobCount = jobCount;
-//                    prevGETCount = getCount;
-//                    prevMULTIGETCount = multiGetCount;
-//                    prevSETCount = setCount;
-//                    prevQueueWaitTime = queueWaitTime;
-//                    prevServiceTime = serviceTime;
-//                }
-//
-//            }
-//        };
-//
-//        timer.scheduleAtFixedRate(task, initialDelay, period);
-//    }
 
     public Statistics getStatistics() {
         return statistics;
