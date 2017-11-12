@@ -10,6 +10,13 @@ public class Parser {
     // Logging
     private final static Logger log = LogManager.getLogger(Parser.class);
 
+    public static boolean isEmptyResponse(byte[] message) {
+        String msg = new String(message);
+        msg = msg.replaceAll("END\\r\\n","");
+        if (msg.length() == 0) return true;
+        else return false;
+    }
+
     // returns an error if there is one, otherwise just normal reply
     public static ByteBuffer getSingleResponse(Set<ByteBuffer> serverResponses) {
 
@@ -26,6 +33,7 @@ public class Parser {
         //System.out.println(new String(res.array()));
         return res;
     }
+
 
     // returns zero if the request is supportet, otherwise -1
     // Classify request as GET SET

@@ -24,6 +24,7 @@ public class RunMW {
 
 		// check for specs deviations and cut it
 		specifiactionsCheck();
+		System.out.println("Middleware started...");
 
 		new MiddlewareMain(myIp, myPort, mcAddresses, numThreadsPTP, readSharded).run();
 

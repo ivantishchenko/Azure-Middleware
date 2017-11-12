@@ -29,10 +29,9 @@ public class Histogram {
 
         for (double d: list) {
             int bin = (int) ((d - min) / STEP);
-            if (bin >= numBins) { /* this data point is bigger than max */ }
+            if (bin >= numBins) { /* bigger than max */ }
             else histogram[bin] += 1;
         }
-
 
 //        max /= 1000000;
 //        min /= 1000000;
@@ -46,8 +45,8 @@ public class Histogram {
     public void printHistogram() {
 
         for (int range = 0; range < histogram.length; range++) {
-            String label = range * STEP + " : ";
-            instrumentationLog.info(label + histogram[range]);
+            String label = (range * STEP) / 1000000  + " msec : ";
+            System.out.println(label + histogram[range]);
         }
     }
 
@@ -62,12 +61,5 @@ public class Histogram {
         System.out.println("AVG from histogram =: " + avg / 1000000);
     }
 
-    private String convertToStars(int num) {
-        StringBuilder builder = new StringBuilder();
-        for (int j = 0; j < num; j++) {
-            builder.append('*');
-        }
-        return builder.toString();
-    }
 
 }

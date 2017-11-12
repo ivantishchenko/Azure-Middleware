@@ -201,6 +201,8 @@ public class Worker extends Thread {
             System.arraycopy(buffer.array(), 0, message, 0, numBytesRead);
 
 
+            if (Parser.isEmptyResponse(message)) statistics.setCacheMissCount(statistics.getCacheMissCount() + 1);
+
             serverResponses.add(ByteBuffer.wrap(message));
 
             //log.error("Weird responce " + new String(message));

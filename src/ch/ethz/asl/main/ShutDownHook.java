@@ -8,9 +8,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -77,6 +75,12 @@ public class ShutDownHook extends Thread{
 
             ArrayList<Integer> finalT = new ArrayList<>();
             ArrayList<Double> finalR = new ArrayList<>();
+            ArrayList<Integer> finalLen = new ArrayList<>();
+            ArrayList<Double> finalWait = new ArrayList<>();
+            ArrayList<Double> finalServe = new ArrayList<>();
+            ArrayList<Integer> finalGets = new ArrayList<>();
+            ArrayList<Integer> finalSets = new ArrayList<>();
+            ArrayList<Integer> finalMultiGets = new ArrayList<>();
 
             statsByWorker.forEach((workerName, workerStats) -> {
                 System.out.println(workerName);
@@ -90,17 +94,15 @@ public class ShutDownHook extends Thread{
                 int avgMultiget= (int) workerStats.stream().mapToInt(x -> x.getMULTIGETCount()).average().getAsDouble();
 
                 double avgLatency= workerStats.stream().mapToLong(x -> x.getLatency()).average().getAsDouble();
-                avgLatency /= 1000000;
 
                 System.out.println("Average throughput (ops/sec) = " + avgT);
+                System.out.println("Average response time (msec) = " + avgLatency / 1000000);
                 System.out.println("Average queue length = " + avgLen);
-                System.out.println("Average wait time in queue (nanosec) = " + avgWait);
-                System.out.println("Average service time (nanosec) = " + avgServe);
+                System.out.println("Average wait time in queue (msec) = " + avgWait / 1000000);
+                System.out.println("Average service time (msec) = " + avgServe / 1000000);
                 System.out.println("Number of SET = " + avgSet);
                 System.out.println("Number of GET = " + avgGet);
                 System.out.println("Number of MULTI GET = " + avgMultiget);
-                System.out.println("Averge latency (msec) = " + avgLatency);
-
 
 //                Worker w = workersPool.stream().filter(x -> workerName.equals(x.getName())).collect(Collectors.toList()).get(0);
 //                List<Long> responseTimes = w.getStatistics().getResponseTimesList();
@@ -112,22 +114,26 @@ public class ShutDownHook extends Thread{
 
                 finalT.add(avgT);
                 finalR.add(avgLatency);
+                finalLen.add(avgLen);
+                finalWait.add(avgWait);
+                finalServe.add(avgServe);
+                finalGets.add(avgGet);
+                finalSets.add(avgSet);
+                finalMultiGets.add(avgMultiget);
                 System.out.println("\n");
             });
             input.close();
 
-            System.out.println("Final values");
-            int T = finalT.stream().mapToInt(x -> x).sum();
-            double R = finalR.stream().mapToDouble(x -> x).average().getAsDouble();
-            System.out.println("T ops/sec = " + T);
-            System.out.println("R msec = " + R);
-            System.out.println("\n");
 
             // TODO: Histogram of repsonse times
 
             ArrayList<Long> finalResponseTimes = new ArrayList<>();
+            //ArrayList<Integer> cacheMisses = new ArrayList<>();
             workersPool.forEach(worker -> {
                 List<Long> responseTimes = worker.getStatistics().getResponseTimesList();
+
+                //int count = worker.getStatistics().getCacheMissCount();
+                //cacheMisses.add(count);
 //                double avgResponse = responseTimes.stream().mapToLong(time -> time).average().getAsDouble();
 //                // nanosec -> mseconds
 //                avgResponse /= 1000000;
@@ -138,9 +144,36 @@ public class ShutDownHook extends Thread{
                 responseTimes.forEach(x -> finalResponseTimes.add(x));
             });
 
-            System.out.println("Experimental R msec = " + finalResponseTimes.stream().mapToLong(x -> x).average().getAsDouble()/1000000);
-            System.out.println("responsesTimes Size " +finalResponseTimes.size());
+            System.out.println("FINAL STATS");
+            int T = finalT.stream().mapToInt(x -> x).sum();
+            double R = finalResponseTimes.stream().mapToLong(x -> x).average().getAsDouble() / 1000000;
+            int len = (int) finalLen.stream().mapToInt(x -> x).average().getAsDouble();
+            double wait = finalWait.stream().mapToDouble(x -> x).average().getAsDouble() / 1000000;
+            double serve = finalServe.stream().mapToDouble(x -> x).average().getAsDouble() / 1000000;
+            int gets = (int) finalGets.stream().mapToInt(x -> x).average().getAsDouble();
+            int sets = (int) finalSets.stream().mapToInt(x -> x).average().getAsDouble();
+            int multiGets= (int) finalMultiGets.stream().mapToInt(x -> x).average().getAsDouble();
+            int cacheMissesCount = workersPool.stream().mapToInt(x -> x.getStatistics().getCacheMissCount()).sum();
 
+            double R_window = finalR.stream().mapToDouble(x -> x).average().getAsDouble();
+
+
+            System.out.println("Average throughput (ops/sec) = " + T);
+            System.out.println("Average response time (msec) = " + R);
+            System.out.println("Average queue length = " + len);
+            System.out.println("Average wait time in queue (msec) = " + wait);
+            System.out.println("Average service time (msec) = " + serve);
+            System.out.println("Number of SET = " + sets);
+            System.out.println("Number of GET = " + gets);
+            System.out.println("Number of MULTI GET = " + multiGets);
+            System.out.println("Number of Cache misses = " + cacheMissesCount);
+
+
+            System.out.println("\n");
+
+            System.out.println("Histogram response times (0.1 msec step)");
+            Histogram h = new Histogram(finalResponseTimes);
+            h.printHistogram();
 
         } catch (IOException e) {
             e.printStackTrace();

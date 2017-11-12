@@ -26,6 +26,8 @@ public class Statistics {
 
     private long latency;
 
+    private int cacheMissCount;
+
     public Statistics(String name, int throughput, int queueLength, long queueWaitTime, long serviceTime, int SETCount, int GETCount, int MULTIGETCount, long latency) {
         this.workerName = name;
         this.throughput = throughput;
@@ -36,6 +38,7 @@ public class Statistics {
         this.GETCount = GETCount;
         this.MULTIGETCount = MULTIGETCount;
         this.latency = latency;
+        this.cacheMissCount = 0;
     }
 
     public Statistics(String name, int throughput, int queueLength, long queueWaitTime, long serviceTime, int SETCount, int GETCount, int MULTIGETCount, List<Long> times) {
@@ -48,6 +51,7 @@ public class Statistics {
         this.GETCount = GETCount;
         this.MULTIGETCount = MULTIGETCount;
         this.responseTimesList = times;
+        this.cacheMissCount = 0;
     }
 
     public Statistics() {
@@ -61,6 +65,15 @@ public class Statistics {
         MULTIGETCount = 0;
         latency = 0;
         responseTimesList = new ArrayList<>();
+        cacheMissCount = 0;
+    }
+
+    public int getCacheMissCount() {
+        return cacheMissCount;
+    }
+
+    public void setCacheMissCount(int cacheMissCount) {
+        this.cacheMissCount = cacheMissCount;
     }
 
     public long getLatency() {
