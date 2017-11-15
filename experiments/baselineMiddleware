@@ -1,0 +1,27 @@
+Install java 8 on some machine
+compile JAR
+
+___________________________________________________________________________
+
+SINGLE
+___________________________________________________________________________
+
+CLIENT tivanforaslvms1.westeurope.cloudapp.azure.com A2
+
+MW tivanforaslvms4.westeurope.cloudapp.azure.com A4
+
+SERVER tivanforaslvms6.westeurope.cloudapp.azure.com A1
+
+___________________________________________________________________________
+
+DOUBLE
+___________________________________________________________________________
+
+CLIENT tivanforaslvms1.westeurope.cloudapp.azure.com A2
+
+MW tivanforaslvms4.westeurope.cloudapp.azure.com A4
+MW tivanforaslvms5.westeurope.cloudapp.azure.com A4
+
+SERVER tivanforaslvms6.westeurope.cloudapp.azure.com A1
+
+IF MW not the bottleneck THEN repeat MAX_T experiment with 2 CLIENTS ELSE EXPLAIN

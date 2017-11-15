@@ -125,6 +125,7 @@ class ExperimentPlotter:
 
         # throughput
         plt.figure(1)
+        plt.title("Throughput")
 
         colors = ['b', 'm', 'y']
         markers = ['-x', '-^', '-o']
@@ -152,6 +153,7 @@ class ExperimentPlotter:
 
         # response time
         plt.figure(2)
+        plt.title("Response time")
 
         for i in range(self.MACHINES_NUMBER):
             OUT_R = []
@@ -231,6 +233,7 @@ class ExperimentPlotter:
 
         # throughput
         plt.figure(1)
+        plt.title("Throughput")
         plt.errorbar(clients, T_total, yerr=T_STD, fmt='-o', ecolor='r')
         plt.xticks(ticks)
         plt.ylim(ymin=0)
@@ -244,6 +247,7 @@ class ExperimentPlotter:
 
         # response time
         plt.figure(2)
+        plt.title("Response time")
         plt.errorbar(clients, R_total, yerr=R_STD, fmt='-o', ecolor='r')
         plt.xticks(ticks)
         plt.ylim(ymin=0)
@@ -258,24 +262,25 @@ class ExperimentPlotter:
 
 # PLOTTING
 
-path_GET1 = "/home/ivan/asl-fall17-project/experiments/logfiles/baseline/logfiles_baseline_1_server_GET"
-path_SET1 = "/home/ivan/asl-fall17-project/experiments/logfiles/baseline/logfiles_baseline_1_server_SET"
-path_GET2 = "/home/ivan/asl-fall17-project/experiments/logfiles/baseline/logfiles_baseline_2_servers_GET"
-path_SET2 = "/home/ivan/asl-fall17-project/experiments/logfiles/baseline/logfiles_baseline_2_servers_SET"
+# path_GET1 = "/home/ivan/asl-fall17-project/experiments/logfiles/baseline/logfiles_baseline_1_server_GET"
+# path_SET1 = "/home/ivan/asl-fall17-project/experiments/logfiles/baseline/logfiles_baseline_1_server_SET"
+# path_GET2 = "/home/ivan/asl-fall17-project/experiments/logfiles/baseline/logfiles_baseline_2_servers_GET"
+# path_SET2 = "/home/ivan/asl-fall17-project/experiments/logfiles/baseline/logfiles_baseline_2_servers_SET"
 
-plotter = ExperimentPlotter()
-plotter.set_params(3, path_SET1, 3, 2, 60, [1, 33, 4])
-plotter.plot_baseline_aggregate("baseline_set1_agr_T.png","baseline_set1_agr_R.png")
-plotter.plot_baseline_breakdown("baseline_set1_sep_T.png","baseline_set1_sep_R.png")
+# plotter = ExperimentPlotter()
+# plotter.set_params(3, path_SET1, 3, 2, 60, [1, 33, 4])
+# plotter.plot_baseline_aggregate("baseline_set1_agr_T.png","baseline_set1_agr_R.png")
+# plotter.plot_baseline_breakdown("baseline_set1_sep_T.png","baseline_set1_sep_R.png")
+#
+# plotter.set_params(3, path_GET1, 3, 2, 60, [1, 33, 4])
+# plotter.plot_baseline_aggregate("baseline_get1_agr_T.png","baseline_get1_agr_R.png")
+# plotter.plot_baseline_breakdown("baseline_get1_sep_T.png","baseline_get1_sep_R.png")
+#
+# plotter.set_params(3, path_SET2, 2, 1, 60, [1, 33, 4])
+# plotter.plot_baseline_aggregate("baseline_set2_agr_T.png","baseline_set2_agr_R.png")
+# plotter.plot_baseline_breakdown("baseline_set2_sep_T.png","baseline_set2_sep_R.png")
+#
+# plotter.set_params(3, path_GET2, 2, 1, 60, [1, 33, 4])
+# plotter.plot_baseline_aggregate("baseline_get2_agr_T.png","baseline_get2_agr_R.png")
+# plotter.plot_baseline_breakdown("baseline_get2_sep_T.png","baseline_get2_sep_R.png")
 
-plotter.set_params(3, path_GET1, 3, 2, 60, [1, 33, 4])
-plotter.plot_baseline_aggregate("baseline_get1_agr_T.png","baseline_get1_agr_R.png")
-plotter.plot_baseline_breakdown("baseline_get1_sep_T.png","baseline_get1_sep_R.png")
-
-plotter.set_params(3, path_SET2, 2, 1, 60, [1, 33, 4])
-plotter.plot_baseline_aggregate("baseline_set2_agr_T.png","baseline_set2_agr_R.png")
-plotter.plot_baseline_breakdown("baseline_set2_sep_T.png","baseline_set2_sep_R.png")
-
-plotter.set_params(3, path_GET2, 2, 1, 60, [1, 33, 4])
-plotter.plot_baseline_aggregate("baseline_get2_agr_T.png","baseline_get2_agr_R.png")
-plotter.plot_baseline_breakdown("baseline_get2_sep_T.png","baseline_get2_sep_R.png")

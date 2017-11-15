@@ -2,33 +2,30 @@
 
 server="optimus.inf.ethz.ch"
 user="tivan"
+cmd="nc -l 8080"
 
-export export PATH="~/test:$PATH"
-
-echo $PATH
-
-
-#port=8888
-
-#lang="python"
-#cmd1="${lang} -m SimpleHTTPServer ${port}"
-#cmd2='nc -l 7777'
-
-#session1="server1"
-#session2="server2"
+# PARAMS USER SERVER CMD
+# USAGE: MW_PID=$(get_cmd_pid "$user" "$server" "$cmd")
+# RETURNS PID of the remote SSH CMD
+function get_cmd_pid() {
+    #MW_PID_FILE="MW.pid"
+    PID=$(ssh "${1}"@"${2}" "${3}"' > /dev/null 2>&1 & echo $!')
+    echo $PID
+}
 
 
-cmd1="ping google.com -c 10 >> google"
-cmd2="ping yahoo.com -c 10 >> yahoo"
+#MW_PID_FILE="MW.pid"
 
-ssh -f ${user}@${server} "sh -c '$cmd1; $cmd2 > /dev/null 2>&1 &'"
-#ssh -f ${user}@${server} "sh -c '$cmd1 > /dev/null 2>&1 &'"
+#ssh ${user}@${server} ${cmd}' > /dev/null 2>&1 & echo $! > '${MW_PID_FILE}
 
-# CALL
+#MW_PID=$(ssh ${user}@${server} cat ${MW_PID_FILE})
 
-#kill $( lsof -i:8888 -t )
-#kill $( lsof -i:7777 -t )
+#MW_PID=$(ssh ${user}@${server} ${cmd}' > /dev/null 2>&1 & echo $!')
+
+MW_PID=$(get_cmd_pid "$user" "$server" "$cmd")
 
 
 
-echo "BG"
+echo $MW_PID
+
+ssh ${user}@${server} kill ${MW_PID}

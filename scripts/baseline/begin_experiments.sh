@@ -52,9 +52,9 @@ ssh ${user}@${client3} ${MKDIR_CMD}
 
 #
 #
-ssh ${user}@${server1} screen -S DSTAT -d -m "dstat --time --cpu --mem --net --output ~/report.csv"
-ssh ${user}@${server2} screen -S DSTAT -d -m "dstat --time --cpu --mem --net --output ~/report.csv"
+#ssh ${user}@${server1} screen -S DSTAT -d -m "dstat --time --cpu --mem --net --output ~/report.csv"
+#ssh ${user}@${server2} screen -S DSTAT -d -m "dstat --time --cpu --mem --net --output ~/report.csv"
 
-ssh ${user}@${client1} screen -S DSTAT -d -m "dstat --time --cpu --mem --net --output ~/report.csv"
-ssh ${user}@${client2} screen -S DSTAT -d -m "dstat --time --cpu --mem --net --output ~/report.csv"
-ssh ${user}@${client3} screen -S DSTAT -d -m "dstat --time --cpu --mem --net --output ~/report.csv"
+#ssh ${user}@${client1} screen -S DSTAT -d -m "dstat --time --cpu --mem --net --output ~/report.csv"
+#ssh ${user}@${client2} screen -S DSTAT -d -m "dstat --time --cpu --mem --net --output ~/report.csv"
+#ssh ${user}@${client3} screen -S DSTAT -d -m "dstat --time --cpu --mem --net --output ~/report.csv"
