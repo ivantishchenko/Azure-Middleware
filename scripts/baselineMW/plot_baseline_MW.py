@@ -187,39 +187,28 @@ class ExperimentPlotter:
 
 
 
-path = "/home/ivan/asl-fall17-project/scripts/baselineMW/single/logfiles_baselineMW_single_SET_client"
+# path = "/home/ivan/asl-fall17-project/scripts/baselineMW/single/logfiles_baselineMW_single_SET_client"
+# plotter = ExperimentPlotter()
+# plotter.INSIDE_MW = False
+# plotter.set_params(3, path, 1, 2, 60, [1, 33, 4])
+# plotter.plot_baseline_aggregate("baselineClient_set_agr_T.png","baselineClient_set_agr_R.png")
+#
+# path = "/home/ivan/asl-fall17-project/scripts/baselineMW/single/logfiles_baselineMW_single_SET_MW"
+# plotter = ExperimentPlotter()
+# plotter.INSIDE_MW = True
+# plotter.set_params(3, path, 1, 2, 60, [1, 33, 4])
+# plotter.plot_baseline_aggregate("baselineMW_set_agr_T.png","baselineMW_set_agr_R.png")
+
+
+
+path = "/home/ivan/asl-fall17-project/scripts/baselineMW/double/logfiles_baselineMW_double_SET_client"
 plotter = ExperimentPlotter()
 plotter.INSIDE_MW = False
-plotter.set_params(3, path, 1, 2, 60, [1, 33, 4])
-plotter.plot_baseline_aggregate("baselineClient_set_agr_T.png","baselineClient_set_agr_R.png")
+plotter.set_params(3, path, 2, 1, 60, [1, 33, 4])
+plotter.plot_baseline_aggregate("baselineClientDouble_set_agr_T.png","baselineClientDouble_set_agr_R.png")
 
-path = "/home/ivan/asl-fall17-project/scripts/baselineMW/single/logfiles_baselineMW_single_SET_MW"
+path = "/home/ivan/asl-fall17-project/scripts/baselineMW/double/logfiles_baselineMW_double_SET_MW"
 plotter = ExperimentPlotter()
 plotter.INSIDE_MW = True
-plotter.set_params(3, path, 1, 2, 60, [1, 33, 4])
-plotter.plot_baseline_aggregate("baselineMW_set_agr_T.png","baselineMW_set_agr_R.png")
-
-# PLOTTING
-
-# path_GET1 = "/home/ivan/asl-fall17-project/experiments/logfiles/baseline/logfiles_baseline_1_server_GET"
-# path_SET1 = "/home/ivan/asl-fall17-project/experiments/logfiles/baseline/logfiles_baseline_1_server_SET"
-# path_GET2 = "/home/ivan/asl-fall17-project/experiments/logfiles/baseline/logfiles_baseline_2_servers_GET"
-# path_SET2 = "/home/ivan/asl-fall17-project/experiments/logfiles/baseline/logfiles_baseline_2_servers_SET"
-
-# plotter = ExperimentPlotter()
-# plotter.set_params(3, path_SET1, 3, 2, 60, [1, 33, 4])
-# plotter.plot_baseline_aggregate("baseline_set1_agr_T.png","baseline_set1_agr_R.png")
-# plotter.plot_baseline_breakdown("baseline_set1_sep_T.png","baseline_set1_sep_R.png")
-#
-# plotter.set_params(3, path_GET1, 3, 2, 60, [1, 33, 4])
-# plotter.plot_baseline_aggregate("baseline_get1_agr_T.png","baseline_get1_agr_R.png")
-# plotter.plot_baseline_breakdown("baseline_get1_sep_T.png","baseline_get1_sep_R.png")
-#
-# plotter.set_params(3, path_SET2, 2, 1, 60, [1, 33, 4])
-# plotter.plot_baseline_aggregate("baseline_set2_agr_T.png","baseline_set2_agr_R.png")
-# plotter.plot_baseline_breakdown("baseline_set2_sep_T.png","baseline_set2_sep_R.png")
-#
-# plotter.set_params(3, path_GET2, 2, 1, 60, [1, 33, 4])
-# plotter.plot_baseline_aggregate("baseline_get2_agr_T.png","baseline_get2_agr_R.png")
-# plotter.plot_baseline_breakdown("baseline_get2_sep_T.png","baseline_get2_sep_R.png")
-
+plotter.set_params(3, path, 2, 1, 60, [1, 33, 4])
+plotter.plot_baseline_aggregate("baselineMWDouble_set_agr_T.png","baselineMWDoulbe_set_agr_R.png")

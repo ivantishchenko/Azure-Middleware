@@ -53,6 +53,7 @@ workers=(8 16 32 64)
 cmdpart_SET="memtier_benchmark-master/memtier_benchmark --protocol=memcache_text --ratio=1:0 --expiry-range=9999-10000 --key-maximum=10000 --data-size=1024 --hide-histogram"
 cmdpart_GET="memtier_benchmark-master/memtier_benchmark --protocol=memcache_text --ratio=0:1 --expiry-range=9999-10000 --key-maximum=10000 --data-size=1024 --hide-histogram"
 
+RM_CMD="rm -rf log/"
 CMD_PART_MW="java -jar middleware-tivan.jar -l 127.0.0.1 -p ${mw_port} -s false -m ${server}:${server_port}"
 server_cmd="memcached -p ${server_port} -t 1"
 

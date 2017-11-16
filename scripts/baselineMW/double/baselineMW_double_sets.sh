@@ -3,7 +3,6 @@
 parent_dir=$(dirname $PWD)
 source ${parent_dir}/baseline_mw.sh
 
-
 # launch MEMCACHED
 ssh -f ${user}@${server} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
 
@@ -25,15 +24,19 @@ do
             MW_PID1=$(get_cmd_pid "$user" "$middleware1" "$cmd_mw1")
             MW_PID2=$(get_cmd_pid "$user" "$middleware2" "$cmd_mw2")
 
-            sleep 3
+            sleep 2
 
             ssh ${user}@${client1} $cmd1 &
             ssh ${user}@${client1} $cmd2 &
 
             sleep $((time + 2))
 
-            ssh ${user}@${middleware1} kill ${MW_PID1}
-            ssh ${user}@${middleware1} kill ${MW_PID2}
+            ssh ${user}@${middleware1} kill -15 ${MW_PID1}
+            ssh ${user}@${middleware2} kill -15 ${MW_PID2}
+
+            sleep 2
+            rm -rf "log"
+
         done
     done
 done

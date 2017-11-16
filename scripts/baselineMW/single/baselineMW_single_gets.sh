@@ -4,6 +4,8 @@ parent_dir=$(dirname $PWD)
 source ${parent_dir}/baseline_mw.sh
 
 
+RM_CMD="rm -rf log/"
+
 # repeat W times
 for w in "${workers[@]}";
 do
@@ -18,12 +20,16 @@ do
 
             MW_PID=$(get_cmd_pid "$user" "$middleware1" "$cmd_mw")
 
-            sleep 3
+            sleep 2
 
             ssh ${user}@${client1} $cmd1
-            #sleep $((time + 2))
+            sleep $((time + 2))
 
-            ssh ${user}@${middleware1} kill ${MW_PID}
+
+            ssh ${user}@${middleware1} kill -15 ${MW_PID}
+            sleep 2
+            ssh ${user}@${middleware1} $RM_CMD
+
         done
     done
 done
