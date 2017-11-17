@@ -1,0 +1,335 @@
+Middleware started...
+Middleware shuts down...
+Smaller resolution statistics are in a log file...
+Final aggregates per worker:
+
+
+Worker 13
+Average throughput (ops/sec) = 2804
+Average response time (msec) = 0.7223884516129033
+Average queue length = 15
+Average wait time in queue (msec) = 0.3612850322580645
+Average service time (msec) = 0.2357204193548387
+Number of SET = 0
+Number of GET = 2804
+Number of MULTI GET = 0
+
+
+Worker 7
+Average throughput (ops/sec) = 2801
+Average response time (msec) = 0.7263080645161291
+Average queue length = 15
+Average wait time in queue (msec) = 0.35909941935483874
+Average service time (msec) = 0.2360172258064516
+Number of SET = 0
+Number of GET = 2801
+Number of MULTI GET = 0
+
+
+Worker 14
+Average throughput (ops/sec) = 2807
+Average response time (msec) = 0.7235800645161291
+Average queue length = 15
+Average wait time in queue (msec) = 0.35870583870967737
+Average service time (msec) = 0.2368164193548387
+Number of SET = 0
+Number of GET = 2807
+Number of MULTI GET = 0
+
+
+Worker 6
+Average throughput (ops/sec) = 2820
+Average response time (msec) = 0.7230042903225806
+Average queue length = 15
+Average wait time in queue (msec) = 0.36404512903225805
+Average service time (msec) = 0.23280664516129032
+Number of SET = 0
+Number of GET = 2820
+Number of MULTI GET = 0
+
+
+Worker 9
+Average throughput (ops/sec) = 2800
+Average response time (msec) = 0.7208208064516128
+Average queue length = 15
+Average wait time in queue (msec) = 0.3613972258064516
+Average service time (msec) = 0.23330664516129032
+Number of SET = 0
+Number of GET = 2800
+Number of MULTI GET = 0
+
+
+Worker 15
+Average throughput (ops/sec) = 2820
+Average response time (msec) = 0.7166834838709678
+Average queue length = 15
+Average wait time in queue (msec) = 0.3588054838709678
+Average service time (msec) = 0.2325121935483871
+Number of SET = 0
+Number of GET = 2820
+Number of MULTI GET = 0
+
+
+Worker 16
+Average throughput (ops/sec) = 2820
+Average response time (msec) = 0.7246562258064516
+Average queue length = 15
+Average wait time in queue (msec) = 0.36318470967741934
+Average service time (msec) = 0.23129322580645162
+Number of SET = 0
+Number of GET = 2820
+Number of MULTI GET = 0
+
+
+Worker 8
+Average throughput (ops/sec) = 2816
+Average response time (msec) = 0.7163686774193548
+Average queue length = 15
+Average wait time in queue (msec) = 0.3605333870967742
+Average service time (msec) = 0.23104248387096774
+Number of SET = 0
+Number of GET = 2816
+Number of MULTI GET = 0
+
+
+Worker 3
+Average throughput (ops/sec) = 2812
+Average response time (msec) = 0.7225172258064516
+Average queue length = 15
+Average wait time in queue (msec) = 0.3618893870967742
+Average service time (msec) = 0.23248664516129033
+Number of SET = 0
+Number of GET = 2812
+Number of MULTI GET = 0
+
+
+Worker 10
+Average throughput (ops/sec) = 2814
+Average response time (msec) = 0.7215909032258064
+Average queue length = 15
+Average wait time in queue (msec) = 0.3561634516129032
+Average service time (msec) = 0.23957048387096772
+Number of SET = 0
+Number of GET = 2814
+Number of MULTI GET = 0
+
+
+Worker 2
+Average throughput (ops/sec) = 2812
+Average response time (msec) = 0.724991129032258
+Average queue length = 15
+Average wait time in queue (msec) = 0.35992106451612904
+Average service time (msec) = 0.23872219354838708
+Number of SET = 0
+Number of GET = 2812
+Number of MULTI GET = 0
+
+
+Worker 5
+Average throughput (ops/sec) = 2797
+Average response time (msec) = 0.7237103870967742
+Average queue length = 15
+Average wait time in queue (msec) = 0.36189664516129033
+Average service time (msec) = 0.23478387096774195
+Number of SET = 0
+Number of GET = 2797
+Number of MULTI GET = 0
+
+
+Worker 11
+Average throughput (ops/sec) = 2797
+Average response time (msec) = 0.7216862580645161
+Average queue length = 15
+Average wait time in queue (msec) = 0.35947696774193544
+Average service time (msec) = 0.23508109677419353
+Number of SET = 0
+Number of GET = 2797
+Number of MULTI GET = 0
+
+
+Worker 12
+Average throughput (ops/sec) = 2793
+Average response time (msec) = 0.7215657741935484
+Average queue length = 15
+Average wait time in queue (msec) = 0.3588873548387097
+Average service time (msec) = 0.23520354838709678
+Number of SET = 0
+Number of GET = 2793
+Number of MULTI GET = 0
+
+
+Worker 4
+Average throughput (ops/sec) = 2795
+Average response time (msec) = 0.7282878387096775
+Average queue length = 15
+Average wait time in queue (msec) = 0.36221296774193545
+Average service time (msec) = 0.23406135483870966
+Number of SET = 0
+Number of GET = 2795
+Number of MULTI GET = 0
+
+
+Worker 1
+Average throughput (ops/sec) = 2803
+Average response time (msec) = 0.7205028709677419
+Average queue length = 15
+Average wait time in queue (msec) = 0.35877132258064515
+Average service time (msec) = 0.23571464516129034
+Number of SET = 0
+Number of GET = 2803
+Number of MULTI GET = 0
+
+
+FINAL STATS
+Average throughput (ops/sec) = 44911
+Average response time (msec) = 0.6872714914656626
+Average queue length = 15
+Average wait time in queue (msec) = 0.36039221169354835
+Average service time (msec) = 0.23469619354838708
+Number of SET = 0
+Number of GET = 2806
+Number of MULTI GET = 0
+Number of Cache misses = 408
+
+
+Histogram response times (0.1 msec step)
+0.0 msec : 610
+0.1 msec : 3045
+0.2 msec : 54236
+0.3 msec : 265145
+0.4 msec : 241589
+0.5 msec : 136935
+0.6 msec : 164610
+0.7 msec : 183831
+0.8 msec : 116800
+0.9 msec : 64968
+1.0 msec : 54889
+1.1 msec : 42801
+1.2 msec : 24129
+1.3 msec : 12256
+1.4 msec : 8220
+1.5 msec : 5739
+1.6 msec : 3377
+1.7 msec : 1833
+1.8 msec : 1199
+1.9 msec : 816
+2.0 msec : 501
+2.1 msec : 374
+2.2 msec : 260
+2.3 msec : 227
+2.4 msec : 151
+2.5 msec : 143
+2.6 msec : 140
+2.7 msec : 112
+2.8 msec : 125
+2.9 msec : 103
+3.0 msec : 117
+3.1 msec : 112
+3.2 msec : 114
+3.3 msec : 115
+3.4 msec : 117
+3.5 msec : 155
+3.6 msec : 158
+3.7 msec : 155
+3.8 msec : 154
+3.9 msec : 154
+4.0 msec : 155
+4.1 msec : 157
+4.2 msec : 121
+4.3 msec : 151
+4.4 msec : 140
+4.5 msec : 123
+4.6 msec : 120
+4.7 msec : 121
+4.8 msec : 99
+4.9 msec : 87
+5.0 msec : 97
+5.1 msec : 69
+5.2 msec : 57
+5.3 msec : 36
+5.4 msec : 42
+5.5 msec : 32
+5.6 msec : 25
+5.7 msec : 21
+5.8 msec : 27
+5.9 msec : 13
+6.0 msec : 10
+6.1 msec : 18
+6.2 msec : 15
+6.3 msec : 25
+6.4 msec : 26
+6.5 msec : 17
+6.6 msec : 11
+6.7 msec : 11
+6.8 msec : 14
+6.9 msec : 12
+7.0 msec : 12
+7.1 msec : 12
+7.2 msec : 16
+7.3 msec : 10
+7.4 msec : 9
+7.5 msec : 9
+7.6 msec : 3
+7.7 msec : 5
+7.8 msec : 7
+7.9 msec : 2
+8.0 msec : 7
+8.1 msec : 7
+8.2 msec : 6
+8.3 msec : 3
+8.4 msec : 5
+8.5 msec : 10
+8.6 msec : 4
+8.7 msec : 5
+8.8 msec : 7
+8.9 msec : 3
+9.0 msec : 8
+9.1 msec : 3
+9.2 msec : 4
+9.3 msec : 1
+9.4 msec : 2
+9.5 msec : 3
+9.6 msec : 6
+9.7 msec : 1
+9.8 msec : 0
+9.9 msec : 1
+10.0 msec : 1
+10.1 msec : 1
+10.2 msec : 2
+10.3 msec : 0
+10.4 msec : 1
+10.5 msec : 0
+10.6 msec : 0
+10.7 msec : 0
+10.8 msec : 0
+10.9 msec : 0
+11.0 msec : 1
+11.1 msec : 0
+11.2 msec : 0
+11.3 msec : 0
+11.4 msec : 0
+11.5 msec : 2
+11.6 msec : 1
+11.7 msec : 0
+11.8 msec : 0
+11.9 msec : 0
+12.0 msec : 1
+12.1 msec : 0
+12.2 msec : 0
+12.3 msec : 0
+12.4 msec : 0
+12.5 msec : 1
+12.6 msec : 0
+12.7 msec : 0
+12.8 msec : 0
+12.9 msec : 0
+13.0 msec : 0
+13.1 msec : 1
+13.2 msec : 0
+13.3 msec : 0
+13.4 msec : 0
+13.5 msec : 0
+13.6 msec : 0
+13.7 msec : 0
+13.8 msec : 0
+13.9 msec : 0

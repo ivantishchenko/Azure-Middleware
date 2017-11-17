@@ -1,0 +1,325 @@
+Middleware started...
+Middleware shuts down...
+Smaller resolution statistics are in a log file...
+Final aggregates per worker:
+
+
+Worker 7
+Average throughput (ops/sec) = 5758
+Average response time (msec) = 0.8771665483870967
+Average queue length = 28
+Average wait time in queue (msec) = 0.7004678387096774
+Average service time (msec) = 0.1154713870967742
+Number of SET = 0
+Number of GET = 5758
+Number of MULTI GET = 0
+
+
+Worker 6
+Average throughput (ops/sec) = 5784
+Average response time (msec) = 0.877674129032258
+Average queue length = 30
+Average wait time in queue (msec) = 0.7026828387096774
+Average service time (msec) = 0.11453732258064517
+Number of SET = 0
+Number of GET = 5784
+Number of MULTI GET = 0
+
+
+Worker 8
+Average throughput (ops/sec) = 5723
+Average response time (msec) = 0.8788015483870967
+Average queue length = 29
+Average wait time in queue (msec) = 0.7025153548387097
+Average service time (msec) = 0.11593348387096775
+Number of SET = 0
+Number of GET = 5723
+Number of MULTI GET = 0
+
+
+Worker 3
+Average throughput (ops/sec) = 5751
+Average response time (msec) = 0.8771518709677419
+Average queue length = 30
+Average wait time in queue (msec) = 0.7005625483870968
+Average service time (msec) = 0.11494903225806452
+Number of SET = 0
+Number of GET = 5751
+Number of MULTI GET = 0
+
+
+Worker 2
+Average throughput (ops/sec) = 5715
+Average response time (msec) = 0.8785297741935484
+Average queue length = 29
+Average wait time in queue (msec) = 0.7008913225806452
+Average service time (msec) = 0.11629816129032258
+Number of SET = 0
+Number of GET = 5714
+Number of MULTI GET = 0
+
+
+Worker 5
+Average throughput (ops/sec) = 5751
+Average response time (msec) = 0.8762637096774194
+Average queue length = 29
+Average wait time in queue (msec) = 0.6996505161290323
+Average service time (msec) = 0.11571554838709677
+Number of SET = 0
+Number of GET = 5751
+Number of MULTI GET = 0
+
+
+Worker 4
+Average throughput (ops/sec) = 5733
+Average response time (msec) = 0.8772599032258064
+Average queue length = 28
+Average wait time in queue (msec) = 0.6999863225806452
+Average service time (msec) = 0.11578509677419355
+Number of SET = 0
+Number of GET = 5733
+Number of MULTI GET = 0
+
+
+Worker 1
+Average throughput (ops/sec) = 5744
+Average response time (msec) = 0.8770613870967742
+Average queue length = 28
+Average wait time in queue (msec) = 0.7010416129032259
+Average service time (msec) = 0.11495296774193549
+Number of SET = 0
+Number of GET = 5744
+Number of MULTI GET = 0
+
+
+FINAL STATS
+Average throughput (ops/sec) = 45959
+Average response time (msec) = 0.8376750668901626
+Average queue length = 28
+Average wait time in queue (msec) = 0.7009747943548388
+Average service time (msec) = 0.115455375
+Number of SET = 0
+Number of GET = 5744
+Number of MULTI GET = 0
+Number of Cache misses = 420
+
+
+Histogram response times (0.1 msec step)
+0.0 msec : 163
+0.1 msec : 518
+0.2 msec : 1327
+0.3 msec : 2869
+0.4 msec : 37793
+0.5 msec : 66915
+0.6 msec : 281356
+0.7 msec : 492640
+0.8 msec : 322039
+0.9 msec : 139553
+1.0 msec : 48179
+1.1 msec : 15043
+1.2 msec : 5069
+1.3 msec : 2254
+1.4 msec : 1321
+1.5 msec : 878
+1.6 msec : 684
+1.7 msec : 454
+1.8 msec : 322
+1.9 msec : 220
+2.0 msec : 153
+2.1 msec : 121
+2.2 msec : 147
+2.3 msec : 156
+2.4 msec : 114
+2.5 msec : 114
+2.6 msec : 96
+2.7 msec : 93
+2.8 msec : 84
+2.9 msec : 65
+3.0 msec : 88
+3.1 msec : 102
+3.2 msec : 115
+3.3 msec : 138
+3.4 msec : 192
+3.5 msec : 220
+3.6 msec : 218
+3.7 msec : 206
+3.8 msec : 163
+3.9 msec : 151
+4.0 msec : 165
+4.1 msec : 185
+4.2 msec : 216
+4.3 msec : 183
+4.4 msec : 152
+4.5 msec : 95
+4.6 msec : 56
+4.7 msec : 79
+4.8 msec : 108
+4.9 msec : 146
+5.0 msec : 135
+5.1 msec : 94
+5.2 msec : 87
+5.3 msec : 84
+5.4 msec : 60
+5.5 msec : 36
+5.6 msec : 28
+5.7 msec : 27
+5.8 msec : 39
+5.9 msec : 23
+6.0 msec : 38
+6.1 msec : 40
+6.2 msec : 17
+6.3 msec : 19
+6.4 msec : 31
+6.5 msec : 42
+6.6 msec : 36
+6.7 msec : 23
+6.8 msec : 18
+6.9 msec : 24
+7.0 msec : 19
+7.1 msec : 9
+7.2 msec : 9
+7.3 msec : 11
+7.4 msec : 5
+7.5 msec : 9
+7.6 msec : 12
+7.7 msec : 25
+7.8 msec : 24
+7.9 msec : 17
+8.0 msec : 8
+8.1 msec : 7
+8.2 msec : 8
+8.3 msec : 6
+8.4 msec : 3
+8.5 msec : 4
+8.6 msec : 0
+8.7 msec : 4
+8.8 msec : 0
+8.9 msec : 1
+9.0 msec : 0
+9.1 msec : 1
+9.2 msec : 1
+9.3 msec : 0
+9.4 msec : 4
+9.5 msec : 1
+9.6 msec : 2
+9.7 msec : 3
+9.8 msec : 1
+9.9 msec : 9
+10.0 msec : 11
+10.1 msec : 19
+10.2 msec : 9
+10.3 msec : 8
+10.4 msec : 5
+10.5 msec : 2
+10.6 msec : 2
+10.7 msec : 0
+10.8 msec : 2
+10.9 msec : 1
+11.0 msec : 4
+11.1 msec : 3
+11.2 msec : 0
+11.3 msec : 0
+11.4 msec : 1
+11.5 msec : 0
+11.6 msec : 0
+11.7 msec : 1
+11.8 msec : 0
+11.9 msec : 0
+12.0 msec : 0
+12.1 msec : 0
+12.2 msec : 0
+12.3 msec : 0
+12.4 msec : 0
+12.5 msec : 0
+12.6 msec : 0
+12.7 msec : 0
+12.8 msec : 0
+12.9 msec : 0
+13.0 msec : 0
+13.1 msec : 0
+13.2 msec : 0
+13.3 msec : 0
+13.4 msec : 0
+13.5 msec : 0
+13.6 msec : 0
+13.7 msec : 0
+13.8 msec : 0
+13.9 msec : 0
+14.0 msec : 0
+14.1 msec : 0
+14.2 msec : 0
+14.3 msec : 0
+14.4 msec : 0
+14.5 msec : 0
+14.6 msec : 0
+14.7 msec : 0
+14.8 msec : 0
+14.9 msec : 0
+15.0 msec : 0
+15.1 msec : 0
+15.2 msec : 0
+15.3 msec : 0
+15.4 msec : 0
+15.5 msec : 0
+15.6 msec : 0
+15.7 msec : 0
+15.8 msec : 0
+15.9 msec : 0
+16.0 msec : 0
+16.1 msec : 0
+16.2 msec : 0
+16.3 msec : 0
+16.4 msec : 0
+16.5 msec : 0
+16.6 msec : 0
+16.7 msec : 0
+16.8 msec : 0
+16.9 msec : 0
+17.0 msec : 0
+17.1 msec : 0
+17.2 msec : 0
+17.3 msec : 0
+17.4 msec : 0
+17.5 msec : 0
+17.6 msec : 0
+17.7 msec : 0
+17.8 msec : 0
+17.9 msec : 0
+18.0 msec : 0
+18.1 msec : 0
+18.2 msec : 0
+18.3 msec : 0
+18.4 msec : 0
+18.5 msec : 0
+18.6 msec : 0
+18.7 msec : 0
+18.8 msec : 0
+18.9 msec : 0
+19.0 msec : 0
+19.1 msec : 0
+19.2 msec : 1
+19.3 msec : 0
+19.4 msec : 0
+19.5 msec : 0
+19.6 msec : 0
+19.7 msec : 0
+19.8 msec : 0
+19.9 msec : 0
+20.0 msec : 0
+20.1 msec : 0
+20.2 msec : 0
+20.3 msec : 0
+20.4 msec : 0
+20.5 msec : 0
+20.6 msec : 0
+20.7 msec : 0
+20.8 msec : 0
+20.9 msec : 0
+21.0 msec : 0
+21.1 msec : 0
+21.2 msec : 0
+21.3 msec : 0
+21.4 msec : 1
+21.5 msec : 15
+21.6 msec : 16
+21.7 msec : 7

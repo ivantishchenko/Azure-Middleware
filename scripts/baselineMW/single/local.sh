@@ -28,7 +28,7 @@ middleware1="127.0.0.1"
 mw_port="8080"
 server="127.0.0.1"
 server_port="9090"
-time=5
+time=30
 
 server_cmd="memcached -p ${server_port} -t 1"
 CMD_PART_MW="java -jar /home/ivan/asl-fall17-project/dist/middleware-tivan.jar -l 127.0.0.1 -p ${mw_port} -s false -m ${server}:${server_port}"
@@ -46,8 +46,8 @@ do
     do
         for rep in `seq 1 3`;
         do
-            cmd1="${cmdpart_SET} --server=${middleware1} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_single} --out-file=${LOG_FILE_DIR_SINGLE_SET_CLIENT}/${w}/baselineMW_${c}_${rep}_1.log"
-            cmd_mw="${CMD_PART_MW} -t ${w} > ${LOG_FILE_DIR_SINGLE_SET_MW}/${w}/baselineMW_${c}_${rep}_1.log &"
+            cmd1="${cmdpart_GET} --server=${middleware1} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_single} --out-file=${LOG_FILE_DIR_SINGLE_GET_CLIENT}/${w}/baselineMW_${c}_${rep}_1.log"
+            cmd_mw="${CMD_PART_MW} -t ${w} > ${LOG_FILE_DIR_SINGLE_GET_MW}/${w}/baselineMW_${c}_${rep}_1.log &"
 
             eval $cmd_mw
             MW_PID=$!

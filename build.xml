@@ -54,6 +54,7 @@
                 <attribute name="Main-Class" value="ch.ethz.asl.main.RunMW"/>
                 <attribute name="Class-Path" value="${manifest.classpath}"/>
             </manifest>
+            <zipgroupfileset dir="${lib}" includes="**/*.jar" />
         </jar>
     </target>
 

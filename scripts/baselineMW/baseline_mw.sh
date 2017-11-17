@@ -37,7 +37,12 @@ client2="tivanforaslvms2.westeurope.cloudapp.azure.com"
 middleware1="tivanforaslvms4.westeurope.cloudapp.azure.com"
 middleware2="tivanforaslvms5.westeurope.cloudapp.azure.com"
 
+
+middleware1_privat="10.0.0.8"
+middleware2_privat="10.0.0.7"
+
 server="tivanforaslvms6.westeurope.cloudapp.azure.com"
+server_privat="10.0.0.9"
 
 mw_port=8080
 server_port=9090
@@ -54,7 +59,9 @@ cmdpart_SET="memtier_benchmark-master/memtier_benchmark --protocol=memcache_text
 cmdpart_GET="memtier_benchmark-master/memtier_benchmark --protocol=memcache_text --ratio=0:1 --expiry-range=9999-10000 --key-maximum=10000 --data-size=1024 --hide-histogram"
 
 RM_CMD="rm -rf log/"
-CMD_PART_MW="java -jar middleware-tivan.jar -l 127.0.0.1 -p ${mw_port} -s false -m ${server}:${server_port}"
+CMD_PART_MW1="java -jar /home/tivan/asl-fall17-project/dist/middleware-tivan.jar -l ${middleware1_privat} -p ${mw_port} -s false -m ${server_privat}:${server_port}"
+CMD_PART_MW2="java -jar /home/tivan/asl-fall17-project/dist/middleware-tivan.jar -l ${middleware2_privat} -p ${mw_port} -s false -m ${server_privat}:${server_port}"
+
 server_cmd="memcached -p ${server_port} -t 1"
 
 LOG_FILE_DIR_SINGLE_SET_CLIENT="logfiles_baselineMW_single_SET_client"
