@@ -1,0 +1,30 @@
+Middleware started...
+Middleware shuts down...
+Smaller resolution statistics are in a log file...
+Final aggregates per worker:
+
+
+Worker 5
+Average throughput (ops/sec) = 1
+Average response time (msec) = 5.4927
+Average queue length = 0
+Average wait time in queue (msec) = 0.3514
+Average service time (msec) = 3.0073
+Number of SET = 0
+Number of GET = 0
+Number of MULTI GET = 1
+
+
+FINAL STATS
+Average throughput (ops/sec) = 1
+Average response time (msec) = 5.4927
+Average queue length = 0
+Average wait time in queue (msec) = 0.3514
+Average service time (msec) = 3.0073
+Number of SET = 0
+Number of GET = 0
+Number of MULTI GET = 1
+Number of Cache misses = 0
+
+
+Histogram response times (0.1 msec step)

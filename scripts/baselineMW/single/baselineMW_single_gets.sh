@@ -25,11 +25,12 @@ do
             #echo $MW_PID
             sleep 2
 
-            ssh ${user}@${client1} $cmd1
-            #sleep $((time + 2))
+            ssh ${user}@${client1} $cmd1 &
+            sleep $((time + 2))
 
             kill_CMD="pkill --signal 15 -f 'java -jar'"
             ssh ${user}@${middleware1} $kill_CMD
+            sleep 2
             ssh ${user}@${middleware1} $RM_CMD
 
         done

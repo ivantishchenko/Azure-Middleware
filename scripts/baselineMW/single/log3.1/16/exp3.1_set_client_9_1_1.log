@@ -1,0 +1,22 @@
+[RUN #1] Preparing benchmark client...
+[RUN #1] Launching threads now...
+[RUN #1 20%,   1 secs]  2 threads:        3445 ops,    3429 (avg:    3429) ops/sec, 3.48MB/sec (avg: 3.48MB/sec),  5.23 (avg:  5.23) msec latency
+[RUN #1 40%,   2 secs]  2 threads:        6442 ops,    2985 (avg:    3207) ops/sec, 3.03MB/sec (avg: 3.26MB/sec),  6.01 (avg:  5.59) msec latency
+[RUN #1 60%,   3 secs]  2 threads:       12414 ops,    5948 (avg:    4120) ops/sec, 6.04MB/sec (avg: 4.18MB/sec),  3.04 (avg:  4.36) msec latency
+[RUN #1 80%,   4 secs]  2 threads:       18935 ops,    6494 (avg:    4714) ops/sec, 6.59MB/sec (avg: 4.79MB/sec),  2.76 (avg:  3.81) msec latency
+[RUN #1 100%,   5 secs]  0 threads:       25300 ops,    6494 (avg:    5057) ops/sec, 6.59MB/sec (avg: 5.13MB/sec),  2.76 (avg:  3.55) msec latency
+
+
+2         Threads
+9         Connections per thread
+5         Seconds
+
+
+ALL STATS
+========================================================================
+Type        Ops/sec     Hits/sec   Misses/sec      Latency       KB/sec
+------------------------------------------------------------------------
+Sets        6321.47          ---          ---      3.55400      6570.72
+Gets           0.00         0.00         0.00      0.00000         0.00
+Waits          0.00          ---          ---      0.00000          ---
+Totals      6321.47         0.00         0.00      3.55400      6570.72

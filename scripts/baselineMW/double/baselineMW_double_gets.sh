@@ -36,6 +36,7 @@ do
             ssh ${user}@${middleware1} $kill_CMD
             ssh ${user}@${middleware2} $kill_CMD
 
+            sleep 2
             ssh ${user}@${middleware1} $RM_CMD
             ssh ${user}@${middleware2} $RM_CMD
 
