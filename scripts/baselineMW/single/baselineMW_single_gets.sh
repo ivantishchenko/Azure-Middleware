@@ -26,7 +26,7 @@ do
             sleep 2
 
             ssh ${user}@${client1} $cmd1 &
-            sleep $((time + 2))
+            wait
 
             kill_CMD="pkill --signal 15 -f 'java -jar'"
             ssh ${user}@${middleware1} $kill_CMD

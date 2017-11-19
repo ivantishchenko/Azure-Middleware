@@ -3,16 +3,17 @@
 function create_out_dirs_clients() {
     for i in "${workers[@]}";
     do
-        MKDIR_CMD="mkdir -p ${LOG_FILE_DIR_SINGLE_SET_CLIENT}/${i} ${LOG_FILE_DIR_SINGLE_GET_CLIENT}/${i} ${LOG_FILE_DIR_DOUBLE_SET_CLIENT}/${i} ${LOG_FILE_DIR_DOUBLE_GET_CLIENT}/${i}"
+        MKDIR_CMD="mkdir -p ${LOG_FILE_DIR_Client}/${i} ${LOG_FILE_DIR_Client}/${i} ${LOG_FILE_DIR_Client}/${i} ${LOG_FILE_DIR_Client}/${i}"
         ssh ${user}@${client1} ${MKDIR_CMD}
         ssh ${user}@${client2} ${MKDIR_CMD}
+        ssh ${user}@${client3} ${MKDIR_CMD}
     done
 }
 
 function create_out_dirs_mw() {
     for i in "${workers[@]}";
     do
-        MKDIR_CMD="mkdir -p ${LOG_FILE_DIR_SINGLE_SET_MW}/${i} ${LOG_FILE_DIR_SINGLE_GET_MW}/${i} ${LOG_FILE_DIR_DOUBLE_SET_MW}/${i} ${LOG_FILE_DIR_DOUBLE_GET_MW}/${i}"
+        MKDIR_CMD="mkdir -p ${LOG_FILE_DIR_MW}/${i} ${LOG_FILE_DIR_MW}/${i} ${LOG_FILE_DIR_MW}/${i} ${LOG_FILE_DIR_MW}/${i}"
         ssh ${user}@${middleware1} ${MKDIR_CMD}
         ssh ${user}@${middleware2} ${MKDIR_CMD}
     done
@@ -47,12 +48,12 @@ server2="tivanforaslvms7.westeurope.cloudapp.azure.com"
 server3="tivanforaslvms8.westeurope.cloudapp.azure.com"
 
 server_privat1="10.0.0.9"
-server_privat2="10.0.0.10"
-server_privat3="10.0.0.11"
+server_privat2="10.0.0.11"
+server_privat3="10.0.0.5"
 
 mw_port=8080
 server_port=9090
-time=5
+time=60
 
 threads_single=2
 threads_double=1
@@ -70,14 +71,17 @@ CMD_PART_MW2="java -jar /home/tivan/asl-fall17-project/dist/middleware-tivan.jar
 
 server_cmd="memcached -p ${server_port} -t 1"
 
-LOG_FILE_DIR="logfiles_throughputWrites"
+LOG_FILE_DIR_MW="logfiles_throughputWrites_MW"
+LOG_FILE_DIR_Client="logfiles_throughputWrites_Client"
 
 
+#create_out_dirs_mw
+#create_out_dirs_clients
 
 # launch MEMCACHED
-ssh -f ${user}@${server1} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
-ssh -f ${user}@${server2} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
-ssh -f ${user}@${server3} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
+#ssh -f ${user}@${server1} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
+#ssh -f ${user}@${server2} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
+#ssh -f ${user}@${server3} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
 
 # repeat W times
 for w in "${workers[@]}";
@@ -88,21 +92,21 @@ do
     do
         for rep in `seq 1 3`;
         do
-            cmd1="${cmdpart_SET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR}/${w}/throughputWrites_${c}_${rep}_1.log"
-            cmd2="${cmdpart_SET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR}/${w}/throughputWrites_${c}_${rep}_2.log"
-            cmd3="${cmdpart_SET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR}/${w}/throughputWrites_${c}_${rep}_3.log"
-            cmd4="${cmdpart_SET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR}/${w}/throughputWrites_${c}_${rep}_4.log"
-            cmd5="${cmdpart_SET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR}/${w}/throughputWrites_${c}_${rep}_5.log"
-            cmd6="${cmdpart_SET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR}/${w}/throughputWrites_${c}_${rep}_6.log"
+            cmd1="${cmdpart_SET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/${w}/throughputWrites_${c}_${rep}_1.log"
+            cmd2="${cmdpart_SET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/${w}/throughputWrites_${c}_${rep}_2.log"
+            cmd3="${cmdpart_SET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/${w}/throughputWrites_${c}_${rep}_3.log"
+            cmd4="${cmdpart_SET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/${w}/throughputWrites_${c}_${rep}_4.log"
+            cmd5="${cmdpart_SET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/${w}/throughputWrites_${c}_${rep}_5.log"
+            cmd6="${cmdpart_SET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/${w}/throughputWrites_${c}_${rep}_6.log"
 
-            cmd_mw1="${CMD_PART_MW1} -t ${w} > ${LOG_FILE_DIR}/${w}/throughputWritesMW_${c}_${rep}_1.log &"
-            cmd_mw2="${CMD_PART_MW2} -t ${w} > ${LOG_FILE_DIR}/${w}/throughputWritesMW_${c}_${rep}_2.log &"
+            cmd_mw1="${CMD_PART_MW1} -t ${w} > ${LOG_FILE_DIR_MW}/${w}/throughputWrites_${c}_${rep}_1.log &"
+            cmd_mw2="${CMD_PART_MW2} -t ${w} > ${LOG_FILE_DIR_MW}/${w}/throughputWrites_${c}_${rep}_2.log &"
 
             echo "Executing middleware part"
 
             ssh ${user}@${middleware1} $cmd_mw1
+            sleep 2
             ssh ${user}@${middleware2} $cmd_mw2
-
             sleep 2
 
             echo "Executing client part"
@@ -116,7 +120,7 @@ do
             ssh ${user}@${client3} $cmd6 &
 
 
-            sleep $((time + 2))
+            wait
             echo "Killing MW"
 
             kill_CMD="pkill --signal 15 -f 'java -jar'"

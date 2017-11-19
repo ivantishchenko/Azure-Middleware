@@ -21,15 +21,15 @@ do
             echo "Executing middleware part"
 
             ssh ${user}@${middleware1} $cmd_mw1
+            sleep 2
             ssh ${user}@${middleware2} $cmd_mw2
-
             sleep 2
 
             echo "Executing client part"
             ssh ${user}@${client1} $cmd1 &
             ssh ${user}@${client1} $cmd2 &
 
-            sleep $((time + 2))
+            wait
             echo "Killing MW"
 
             kill_CMD="pkill --signal 15 -f 'java -jar'"
