@@ -208,9 +208,3 @@ plotter.plot_baseline_aggregate("multi_gets_shard_T.png", "multi_gets_shard_R.pn
 # plotter.INSIDE_MW = False
 # plotter.set_params(3, path, 3, 2, 2, [1, 33, 4])
 # plotter.plot_baseline_aggregate("multi_gets_nonshard_T.png", "multi_gets_nonshard_R.png")
-
-# path = "/home/ivan/asl-fall17-project/experiments/logfiles/throughputWrites/logfiles_throughputWrites_Client"
-# plotter = ExperimentPlotter()
-# plotter.INSIDE_MW = False
-# plotter.set_params(3, path, 3, 2, 2, [1, 33, 4])
-# plotter.plot_baseline_aggregate("throughput_writesClient_T.png", "throughput_writesClient_R.png")

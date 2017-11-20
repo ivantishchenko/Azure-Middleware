@@ -27,7 +27,7 @@ public class Worker extends Thread {
     // architecture
     private Selector selector;
     private List<SocketChannel> serverSocketChannels;
-    private final int MESSAGE_SIZE = 8092;
+    private final int MESSAGE_SIZE = 32768;
     private ByteBuffer buffer;
 
     // counter of jobs waiting for reply

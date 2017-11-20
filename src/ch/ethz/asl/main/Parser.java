@@ -105,7 +105,7 @@ public class Parser {
 
             // close the request with \r
             sb.append("\r\n");
-            System.out.println(sb.toString());
+            //System.out.println(sb.toString());
             multiGetsSplit.add(sb.toString().getBytes());
 
         }

@@ -7,7 +7,7 @@ source ${parent_dir}/baseline_mw.sh
 #create_out_dirs_mw
 
 # launch MEMCACHED
-#ssh -f ${user}@${server} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
+ssh -f ${user}@${server} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
 
 # repeat W times
 for w in "${workers[@]}";

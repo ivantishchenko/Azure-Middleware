@@ -53,7 +53,7 @@ server_privat3="10.0.0.5"
 
 mw_port=8080
 server_port=9090
-time=60
+time=3
 
 threads_single=2
 threads_double=1
@@ -75,8 +75,8 @@ LOG_FILE_DIR_MW="logfiles_multiGET_nonshard_MW"
 LOG_FILE_DIR_Client="logfiles_multiGET_nonshard_Client"
 
 
-#create_out_dirs_mw
-#create_out_dirs_clients
+create_out_dirs_mw
+create_out_dirs_clients
 
 # launch MEMCACHED
 #ssh -f ${user}@${server1} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
