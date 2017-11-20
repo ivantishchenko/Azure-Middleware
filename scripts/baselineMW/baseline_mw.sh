@@ -46,7 +46,7 @@ server_privat="10.0.0.9"
 
 mw_port=8080
 server_port=9090
-time=5
+time=60
 
 threads_single=2
 threads_double=1
