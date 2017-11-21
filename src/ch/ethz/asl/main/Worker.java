@@ -1,5 +1,6 @@
 package ch.ethz.asl.main;
 
+import com.sun.org.apache.regexp.internal.RE;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -9,8 +10,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -47,6 +46,8 @@ public class Worker extends Thread {
     private Statistics statistics;
     private String logName;
 
+    private String[] serverResponsesGlue;
+
     public Worker(LinkedBlockingQueue<Request> reqQueue, CycleCounter counter, List<String> memCachedServers) {
         // params
         servers = memCachedServers;
@@ -77,6 +78,11 @@ public class Worker extends Thread {
 
         // Statitics
         statistics = new Statistics();
+
+        serverResponsesGlue = new String[serversNumber];
+        for (int i = 0; i < serverResponsesGlue.length; i++) {
+            serverResponsesGlue[i] = "";
+        }
     }
 
     private void openServerConnections() throws IOException {
@@ -204,9 +210,12 @@ public class Worker extends Thread {
             if (Parser.isEmptyResponse(message)) statistics.setCacheMissCount(statistics.getCacheMissCount() + 1);
 
             // TEST
+
+
             System.out.println("Num bytes read " + numBytesRead);
             System.out.println("Weird responce " + new String(message));
             System.out.println("Got from port " + channel.socket().getPort());
+
 
             // TEST
 
@@ -232,7 +241,63 @@ public class Worker extends Thread {
 
     }
 
+    private void readGet(SelectionKey key, Request r) throws IOException {
+        SocketChannel channel = (SocketChannel) key.channel();
+        String addr = channel.socket().getInetAddress().getHostAddress()+":"+ Integer.toString(channel.socket().getPort());
+        int idx = serverIdx.get(addr);
 
+        buffer.clear();
+        int numBytesRead = channel.read(buffer);
+
+        if (numBytesRead == -1) {
+            key.cancel();
+            channel.close();
+            buffer.clear();
+        } else {
+
+            if (numBytesRead == 0)  log.error("Zero bytes read");
+
+            // Convert to string
+            byte[] message = new byte[numBytesRead];
+            System.arraycopy(buffer.array(), 0, message, 0, numBytesRead);
+
+
+            if (Parser.isEmptyResponse(message)) statistics.setCacheMissCount(statistics.getCacheMissCount() + 1);
+
+            // TEST
+
+
+            System.out.println("Num bytes read " + numBytesRead);
+            System.out.println("Weird responce " + new String(message));
+            System.out.println("Got from port " + channel.socket().getPort());
+
+            String checkString = new String(message);
+            if ( checkString.contains("END\r\n") || Parser.isEmptyResponse(checkString.getBytes()) ) {
+
+                serverResponsesGlue[idx] += checkString;
+                System.out.println("GLUED RESPONSE " + serverResponsesGlue[idx]);
+                serverResponses.add(ByteBuffer.wrap(serverResponsesGlue[idx].getBytes()));
+
+                if (MiddlewareMain.sharedRead && r.getType() == Request.RequestType.MULTI_GET) {
+
+                    sharedResponces.set(idx, serverResponsesGlue[idx].getBytes());
+                }
+
+                serverResponsesGlue[idx] = "";
+                log.info("Reply message: " + new String(serverResponsesGlue[idx].getBytes()));
+                // responded
+                responsesLeft--;
+            } else {
+                serverResponsesGlue[idx] += checkString;
+            }
+        }
+
+        // if all servers responded
+        // try to forward back to client
+
+        log.info("Reply from: " + addr);
+
+    }
 
     @Override
     public void run() {
@@ -298,8 +363,13 @@ public class Worker extends Thread {
 
 
                         if (key.isReadable()) {
-                            // Channel is ready for reading
-                            read(key, request);
+                            // if there are GETs glue them
+                            if ( request.getType() == Request.RequestType.MULTI_GET || request.getType() == Request.RequestType.GET) {
+                                readGet(key, request);
+                            }
+                            else {
+                                read(key, request);
+                            }
                         }
                         it.remove();
 
@@ -324,7 +394,7 @@ public class Worker extends Thread {
                                         buffer.put(out);
                                     }
                                     else {
-                                        System.out.println("Sending back to client " + new String(serverResponses.iterator().next().array()));
+                                        //System.out.println("Sending back to client " + new String(serverResponses.iterator().next().array()));
                                         buffer.put(serverResponses.iterator().next());
                                     }
                                     break;
@@ -346,6 +416,7 @@ public class Worker extends Thread {
                             if (MiddlewareMain.sharedRead && request.getType() == Request.RequestType.MULTI_GET) {
                                 for (int i = 0; i < serversNumber; i++) sharedResponces.set(i, "".getBytes());
                             }
+                            cleanGlueResponses();
 
                             // instrumentation
                             long serviceTime = endServiceTime - startServiceTime;
@@ -372,6 +443,12 @@ public class Worker extends Thread {
             e.printStackTrace();
         }
 
+    }
+
+    private void cleanGlueResponses() {
+        for (int i = 0; i < serverResponsesGlue.length; i++) {
+            serverResponsesGlue[i] = "";
+        }
     }
 
     private void doInstrumentation() {
