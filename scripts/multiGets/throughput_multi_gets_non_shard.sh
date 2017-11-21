@@ -59,7 +59,7 @@ threads_single=2
 threads_double=1
 
 clients=(`seq 1 4 33`)
-MULTI_GET_KEYS=(1 3 6 9)
+MULTI_GET_KEYS=(6 9)
 
 # Write only workload
 cmdpart_GET="memtier_benchmark-master/memtier_benchmark --protocol=memcache_text --expiry-range=9999-10000 --key-maximum=10000 --data-size=1024"
@@ -75,8 +75,8 @@ LOG_FILE_DIR_MW="logfiles_multiGET_nonshard_MW"
 LOG_FILE_DIR_Client="logfiles_multiGET_nonshard_Client"
 
 
-create_out_dirs_mw
-create_out_dirs_clients
+#create_out_dirs_mw
+#create_out_dirs_clients
 
 # launch MEMCACHED
 #ssh -f ${user}@${server1} "sh -c '${server_cmd} > /dev/null 2>&1 &'"

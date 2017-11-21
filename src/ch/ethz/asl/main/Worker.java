@@ -114,7 +114,7 @@ public class Worker extends Thread {
 
         buffer.clear();
 
-        System.out.println(Thread.currentThread().getId() + " Going to send: " + new String(request.getRawMessage()));
+        //System.out.println(Thread.currentThread().getId() + " Going to send: " + new String(request.getRawMessage()));
         log.info(Thread.currentThread().getId() + " Going to send: " + new String(request.getRawMessage()));
         buffer.put(request.getRawMessage());
         buffer.flip();
@@ -212,9 +212,9 @@ public class Worker extends Thread {
             // TEST
 
 
-            System.out.println("Num bytes read " + numBytesRead);
-            System.out.println("Weird responce " + new String(message));
-            System.out.println("Got from port " + channel.socket().getPort());
+            //System.out.println("Num bytes read " + numBytesRead);
+            //System.out.println("Weird responce " + new String(message));
+            //System.out.println("Got from port " + channel.socket().getPort());
 
 
             // TEST
@@ -237,6 +237,61 @@ public class Worker extends Thread {
         // try to forward back to client
 
         String addr = channel.socket().getInetAddress().getHostAddress()+":"+ Integer.toString(channel.socket().getPort());
+        log.info("Reply from: " + addr);
+
+    }
+
+
+    private void readSet(SelectionKey key, Request r) throws IOException {
+        SocketChannel channel = (SocketChannel) key.channel();
+        String addr = channel.socket().getInetAddress().getHostAddress()+":"+ Integer.toString(channel.socket().getPort());
+        int idx = serverIdx.get(addr);
+
+        buffer.clear();
+        int numBytesRead = channel.read(buffer);
+
+        if (numBytesRead == -1) {
+            key.cancel();
+            channel.close();
+            buffer.clear();
+        } else {
+
+            if (numBytesRead == 0)  log.error("Zero bytes read");
+
+            // Convert to string
+            byte[] message = new byte[numBytesRead];
+            System.arraycopy(buffer.array(), 0, message, 0, numBytesRead);
+
+
+            if (Parser.isEmptyResponse(message)) statistics.setCacheMissCount(statistics.getCacheMissCount() + 1);
+
+            // TEST
+
+
+            //System.out.println("Num bytes read " + numBytesRead);
+            //System.out.println("Weird responce " + new String(message));
+            //System.out.println("Got from port " + channel.socket().getPort());
+
+            String checkString = new String(message);
+            if ( checkString.contains("STORED\r\n") ) {
+
+                serverResponsesGlue[idx] += checkString;
+                //System.out.println("GLUED RESPONSE " + serverResponsesGlue[idx]);
+                serverResponses.add(ByteBuffer.wrap(serverResponsesGlue[idx].getBytes()));
+
+                serverResponsesGlue[idx] = "";
+                log.info("Reply message: " + new String(serverResponsesGlue[idx].getBytes()));
+                // responded
+                responsesLeft--;
+
+            } else {
+                serverResponsesGlue[idx] += checkString;
+            }
+        }
+
+        // if all servers responded
+        // try to forward back to client
+
         log.info("Reply from: " + addr);
 
     }
@@ -266,16 +321,15 @@ public class Worker extends Thread {
 
             // TEST
 
-
-            System.out.println("Num bytes read " + numBytesRead);
-            System.out.println("Weird responce " + new String(message));
-            System.out.println("Got from port " + channel.socket().getPort());
+            //System.out.println("Num bytes read " + numBytesRead);
+            //System.out.println("Weird responce " + new String(message));
+            //System.out.println("Got from port " + channel.socket().getPort());
 
             String checkString = new String(message);
-            if ( checkString.contains("END\r\n") || Parser.isEmptyResponse(checkString.getBytes()) ) {
+            if ( checkString.contains("END\r\n") ) {
 
                 serverResponsesGlue[idx] += checkString;
-                System.out.println("GLUED RESPONSE " + serverResponsesGlue[idx]);
+                //System.out.println("GLUED RESPONSE " + serverResponsesGlue[idx]);
                 serverResponses.add(ByteBuffer.wrap(serverResponsesGlue[idx].getBytes()));
 
                 if (MiddlewareMain.sharedRead && r.getType() == Request.RequestType.MULTI_GET) {
@@ -367,8 +421,8 @@ public class Worker extends Thread {
                             if ( request.getType() == Request.RequestType.MULTI_GET || request.getType() == Request.RequestType.GET) {
                                 readGet(key, request);
                             }
-                            else {
-                                read(key, request);
+                            else if ( request.getType() == Request.RequestType.SET ){
+                                readSet(key, request);
                             }
                         }
                         it.remove();
