@@ -27,3 +27,11 @@ SERVER tivanforaslvms6.westeurope.cloudapp.azure.com A1
 IF MW not the bottleneck THEN repeat MAX_T experiment with 2 CLIENTS ELSE EXPLAIN
 
 17.11  14-20  23:00
+
+20.11.2017
+
+10 - 12 - SET single
+12 - 14 - GET single
+
+16:30 - 19 DOUBLE SET
+19 -21 DOUBLE GET

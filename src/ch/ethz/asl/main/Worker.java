@@ -107,6 +107,8 @@ public class Worker extends Thread {
         SocketChannel serverChannel = serverSocketChannels.get(serverIdx);
 
         buffer.clear();
+
+        System.out.println(Thread.currentThread().getId() + " Going to send: " + new String(request.getRawMessage()));
         log.info(Thread.currentThread().getId() + " Going to send: " + new String(request.getRawMessage()));
         buffer.put(request.getRawMessage());
         buffer.flip();
@@ -183,12 +185,10 @@ public class Worker extends Thread {
 
     private void read(SelectionKey key, Request r) throws IOException {
         SocketChannel channel = (SocketChannel) key.channel();
-
         buffer.clear();
         int numBytesRead = channel.read(buffer);
 
         if (numBytesRead == -1) {
-            // Client closed connecting
             key.cancel();
             channel.close();
             buffer.clear();
@@ -203,9 +203,14 @@ public class Worker extends Thread {
 
             if (Parser.isEmptyResponse(message)) statistics.setCacheMissCount(statistics.getCacheMissCount() + 1);
 
-            serverResponses.add(ByteBuffer.wrap(message));
+            // TEST
+            System.out.println("Num bytes read " + numBytesRead);
+            System.out.println("Weird responce " + new String(message));
+            System.out.println("Got from port " + channel.socket().getPort());
 
-            //log.error("Weird responce " + new String(message));
+            // TEST
+
+            serverResponses.add(ByteBuffer.wrap(message));
 
             if (MiddlewareMain.sharedRead && r.getType() == Request.RequestType.MULTI_GET) {
                 String addr = channel.socket().getInetAddress().getHostAddress()+":"+ Integer.toString(channel.socket().getPort());
@@ -290,12 +295,13 @@ public class Worker extends Thread {
                     while (it.hasNext()) {
 
                         SelectionKey key = it.next();
+
+
                         if (key.isReadable()) {
                             // Channel is ready for reading
                             read(key, request);
                         }
                         it.remove();
-
 
                         // reply to client
                         if ( responsesLeft == 0 ) {
@@ -304,7 +310,6 @@ public class Worker extends Thread {
                             //System.out.println("Set size: " + serverResponses.size());
                             buffer.clear();
                             // forward the first response to client
-
 
                             switch (request.getType()) {
                                 case SET:
@@ -319,6 +324,7 @@ public class Worker extends Thread {
                                         buffer.put(out);
                                     }
                                     else {
+                                        System.out.println("Sending back to client " + new String(serverResponses.iterator().next().array()));
                                         buffer.put(serverResponses.iterator().next());
                                     }
                                     break;

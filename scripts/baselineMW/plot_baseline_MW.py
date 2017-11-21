@@ -83,6 +83,8 @@ class ExperimentPlotter:
         else:
             if self.MACHINES_NUMBER != 1:
                 MACHINES_RANGE = self.MACHINES_NUMBER * self.THREAD_PER_CLIENT
+            else:
+                MACHINES_RANGE = self.MACHINES_NUMBER
 
         for worker in self.WORKERS_RANGE:
             # Build
@@ -248,15 +250,27 @@ class ExperimentPlotter:
 
 # FINAL commands
 
-path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_double_SET_MW"
+# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_single_GET_client"
+# plotter = ExperimentPlotter()
+# plotter.INSIDE_MW = False
+# plotter.set_params(3, path, 1, 2, 1, [1, 33, 4])
+# plotter.plot_baseline_aggregate("baselineMWClient_get_agr_T.png","baselineMWClient_get_agr_R.png")
+#
+# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_single_GET_MW"
+# plotter = ExperimentPlotter()
+# plotter.INSIDE_MW = True
+# plotter.set_params(3, path, 1, 2, 1, [1, 33, 4])
+# plotter.plot_baseline_aggregate("baselineMW_get_agr_T.png","baselineMW_get_agr_R.png")
+
+
+path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_double_GET_client"
+plotter = ExperimentPlotter()
+plotter.INSIDE_MW = False
+plotter.set_params(3, path, 2, 1, 2, [1, 33, 4])
+plotter.plot_baseline_aggregate("double_baselineMWClient_get_agr_T.png","double_baselineMWClient_get_agr_R.png")
+
+path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_double_GET_MW"
 plotter = ExperimentPlotter()
 plotter.INSIDE_MW = True
-plotter.set_params(3, path, 1, 2, 2, [1, 33, 4])
-plotter.plot_baseline_aggregate("double_baselineMW_set_agr_T.png","double_baselineMW_set_agr_R.png")
-
-path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_single_SET_MW"
-plotter = ExperimentPlotter()
-plotter.INSIDE_MW = True
-plotter.set_params(3, path, 2, 1, 1, [1, 33, 4])
-plotter.plot_baseline_aggregate("baselineMW_set_agr_T.png","baselineMW_set_agr_R.png")
-
+plotter.set_params(3, path, 2, 1, 2, [1, 33, 4])
+plotter.plot_baseline_aggregate("double_baselineMW_get_agr_T.png","double_baselineMW_get_agr_R.png")
