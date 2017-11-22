@@ -78,11 +78,25 @@ LOG_FILE_DIR_Client="logfiles_multiGET_nonshard_Client"
 #create_out_dirs_mw
 #create_out_dirs_clients
 
+echo "Launched servers"
 # launch MEMCACHED
-#ssh -f ${user}@${server1} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
-#ssh -f ${user}@${server2} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
-#ssh -f ${user}@${server3} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
+ssh -f ${user}@${server1} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
+ssh -f ${user}@${server2} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
+ssh -f ${user}@${server3} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
 
+
+POPULATE_CMD1="memtier_benchmark-master/memtier_benchmark --protocol=memcache_text --ratio=1:0 --expiry-range=9999-10000 --key-maximum=10000 --data-size=1024 --server=${server_privat1} --port=${server_port} --test-time=30 --clients=2 --threads=2"
+POPULATE_CMD1="memtier_benchmark-master/memtier_benchmark --protocol=memcache_text --ratio=1:0 --expiry-range=9999-10000 --key-maximum=10000 --data-size=1024 --server=${server_privat2} --port=${server_port} --test-time=30 --clients=2 --threads=2"
+POPULATE_CMD1="memtier_benchmark-master/memtier_benchmark --protocol=memcache_text --ratio=1:0 --expiry-range=9999-10000 --key-maximum=10000 --data-size=1024 --server=${server_privat3} --port=${server_port} --test-time=30 --clients=2 --threads=2"
+
+echo "Populate servers"
+ssh ${user}@${client1} $POPULATE_CMD1 &
+ssh ${user}@${client2} $POPULATE_CMD2 &
+ssh ${user}@${client3} $POPULATE_CMD3 &
+
+wait
+
+echo "Staarting experiment"
 # repeat W times
 for w in "${MULTI_GET_KEYS[@]}";
 do

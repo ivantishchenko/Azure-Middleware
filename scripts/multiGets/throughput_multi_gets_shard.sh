@@ -83,6 +83,9 @@ LOG_FILE_DIR_Client="logfiles_multiGET_shard_Client"
 #ssh -f ${user}@${server2} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
 #ssh -f ${user}@${server3} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
 
+
+
+
 # repeat W times
 for w in "${MULTI_GET_KEYS[@]}";
 do
