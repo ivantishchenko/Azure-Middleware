@@ -363,7 +363,7 @@ public class Worker extends Thread {
 
                         if (key.isReadable()) {
                             // if there are GETs glue them
-                            if ( request.getType() == Request.RequestType.MULTI_GET || request.getType() == Request.RequestType.GET ) {
+                            if ( request.getType() == Request.RequestType.MULTI_GET ) {
                                 readGet(key, request);
                             }
                             else {
