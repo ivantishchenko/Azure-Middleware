@@ -59,7 +59,7 @@ threads_single=2
 threads_double=1
 
 clients=(`seq 1 4 33`)
-MULTI_GET_KEYS=(6 9)
+MULTI_GET_KEYS=(1 3 6 9)
 
 # Write only workload
 cmdpart_GET="memtier_benchmark-master/memtier_benchmark --protocol=memcache_text --expiry-range=9999-10000 --key-maximum=10000 --data-size=1024"
@@ -86,8 +86,8 @@ ssh -f ${user}@${server3} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
 
 
 POPULATE_CMD1="memtier_benchmark-master/memtier_benchmark --protocol=memcache_text --ratio=1:0 --expiry-range=9999-10000 --key-maximum=10000 --data-size=1024 --server=${server_privat1} --port=${server_port} --test-time=30 --clients=2 --threads=2"
-POPULATE_CMD1="memtier_benchmark-master/memtier_benchmark --protocol=memcache_text --ratio=1:0 --expiry-range=9999-10000 --key-maximum=10000 --data-size=1024 --server=${server_privat2} --port=${server_port} --test-time=30 --clients=2 --threads=2"
-POPULATE_CMD1="memtier_benchmark-master/memtier_benchmark --protocol=memcache_text --ratio=1:0 --expiry-range=9999-10000 --key-maximum=10000 --data-size=1024 --server=${server_privat3} --port=${server_port} --test-time=30 --clients=2 --threads=2"
+POPULATE_CMD2="memtier_benchmark-master/memtier_benchmark --protocol=memcache_text --ratio=1:0 --expiry-range=9999-10000 --key-maximum=10000 --data-size=1024 --server=${server_privat2} --port=${server_port} --test-time=30 --clients=2 --threads=2"
+POPULATE_CMD3="memtier_benchmark-master/memtier_benchmark --protocol=memcache_text --ratio=1:0 --expiry-range=9999-10000 --key-maximum=10000 --data-size=1024 --server=${server_privat3} --port=${server_port} --test-time=30 --clients=2 --threads=2"
 
 echo "Populate servers"
 ssh ${user}@${client1} $POPULATE_CMD1 &
@@ -96,25 +96,24 @@ ssh ${user}@${client3} $POPULATE_CMD3 &
 
 wait
 
-echo "Staarting experiment"
+VC_NUM=2
+
 # repeat W times
 for w in "${MULTI_GET_KEYS[@]}";
 do
     echo "Number of keys = ${w}"
     # launch MW with w threads
-    for c in "${clients[@]}";
-    do
         for rep in `seq 1 3`;
         do
-            cmd1="${cmdpart_GET} --ratio=1:${w} --multi-key-get=${w} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/${w}/multi_get_${c}_${rep}_1.log"
-            cmd2="${cmdpart_GET} --ratio=1:${w} --multi-key-get=${w} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/${w}/multi_get_${c}_${rep}_2.log"
-            cmd3="${cmdpart_GET} --ratio=1:${w} --multi-key-get=${w} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/${w}/multi_get_${c}_${rep}_3.log"
-            cmd4="${cmdpart_GET} --ratio=1:${w} --multi-key-get=${w} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/${w}/multi_get_${c}_${rep}_4.log"
-            cmd5="${cmdpart_GET} --ratio=1:${w} --multi-key-get=${w} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/${w}/multi_get_${c}_${rep}_5.log"
-            cmd6="${cmdpart_GET} --ratio=1:${w} --multi-key-get=${w} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/${w}/multi_get_${c}_${rep}_6.log"
+            cmd1="${cmdpart_GET} --ratio=1:${w} --multi-key-get=${w} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/multi_get_${w}_${rep}_1.log"
+            cmd2="${cmdpart_GET} --ratio=1:${w} --multi-key-get=${w} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/multi_get_${w}_${rep}_2.log"
+            cmd3="${cmdpart_GET} --ratio=1:${w} --multi-key-get=${w} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/multi_get_${w}_${rep}_3.log"
+            cmd4="${cmdpart_GET} --ratio=1:${w} --multi-key-get=${w} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/multi_get_${w}_${rep}_4.log"
+            cmd5="${cmdpart_GET} --ratio=1:${w} --multi-key-get=${w} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/multi_get_${w}_${rep}_5.log"
+            cmd6="${cmdpart_GET} --ratio=1:${w} --multi-key-get=${w} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/multi_get_${w}_${rep}_6.log"
 
-            cmd_mw1="${CMD_PART_MW1} -t ${w} > ${LOG_FILE_DIR_MW}/${w}/multi_get_${c}_${rep}_1.log &"
-            cmd_mw2="${CMD_PART_MW2} -t ${w} > ${LOG_FILE_DIR_MW}/${w}/multi_get_${c}_${rep}_2.log &"
+            cmd_mw1="${CMD_PART_MW1} -t 64 > ${LOG_FILE_DIR_MW}/multi_get_${w}_${rep}_1.log &"
+            cmd_mw2="${CMD_PART_MW2} -t 64 > ${LOG_FILE_DIR_MW}/multi_get_${w}_${rep}_2.log &"
 
             echo "Executing middleware part"
 
@@ -146,7 +145,6 @@ do
             ssh ${user}@${middleware2} $RM_CMD
 
         done
-    done
 done
 
 echo "Done executing"
