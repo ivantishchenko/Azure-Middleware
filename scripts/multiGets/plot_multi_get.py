@@ -260,6 +260,10 @@ path = "/home/ivan/asl-fall17-project/experiments/logfiles/multiGets/logfiles_mu
 
 plotter = ExperimentPlotter()
 plotter.set_params(3, path, 6, 1)
-plotter.plot_baseline_aggregate("multi_get_T.png","multi_get_R.png")
+plotter.plot_baseline_aggregate("shard_multi_get_T.png","shard_multi_get_R.png")
 
+path = "/home/ivan/asl-fall17-project/experiments/logfiles/multiGets/logfiles_multiGET_nonshard_Client"
 
+plotter = ExperimentPlotter()
+plotter.set_params(3, path, 6, 1)
+plotter.plot_baseline_aggregate("nonshard_multi_get_T.png","nonshard_multi_get_R.png")

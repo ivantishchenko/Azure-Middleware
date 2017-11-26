@@ -140,11 +140,11 @@ do
         for rep in `seq 1 3`;
         do
             cmd1="${cmdpart_GET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/2k_3_1_${w}_${rep}_1.log"
-            cmd2="${cmdpart_GET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/2k_3_1_${w}_${rep}_2.log"
+            cmd2="${cmdpart_GET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/2k_3_1_${w}_${rep}_2.log"
             cmd3="${cmdpart_GET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/2k_3_1_${w}_${rep}_3.log"
-            cmd4="${cmdpart_GET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/2k_3_1_${w}_${rep}_4.log"
+            cmd4="${cmdpart_GET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/2k_3_1_${w}_${rep}_4.log"
             cmd5="${cmdpart_GET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/2k_3_1_${w}_${rep}_5.log"
-            cmd6="${cmdpart_GET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/2k_3_1_${w}_${rep}_6.log"
+            cmd6="${cmdpart_GET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/2k_3_1_${w}_${rep}_6.log"
 
             cmd_mw1="${CMD_PART_MW1_3_SERVERS} -t ${w} > ${LOG_FILE_DIR_MW}/2k_3_1_${w}_${rep}_1.log &"
 
@@ -234,11 +234,11 @@ do
         for rep in `seq 1 3`;
         do
             cmd1="${cmdpart_GET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/2k_2_1_${w}_${rep}_1.log"
-            cmd2="${cmdpart_GET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/2k_2_1_${w}_${rep}_2.log"
+            cmd2="${cmdpart_GET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/2k_2_1_${w}_${rep}_2.log"
             cmd3="${cmdpart_GET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/2k_2_1_${w}_${rep}_3.log"
-            cmd4="${cmdpart_GET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/2k_2_1_${w}_${rep}_4.log"
+            cmd4="${cmdpart_GET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/2k_2_1_${w}_${rep}_4.log"
             cmd5="${cmdpart_GET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/2k_2_1_${w}_${rep}_5.log"
-            cmd6="${cmdpart_GET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/2k_2_1_${w}_${rep}_6.log"
+            cmd6="${cmdpart_GET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${VC_NUM} --threads=${threads_double} --out-file=${LOG_FILE_DIR_Client}/2k_2_1_${w}_${rep}_6.log"
 
             cmd_mw1="${CMD_PART_MW1_2_SERVERS} -t ${w} > ${LOG_FILE_DIR_MW}/2k_2_1_${w}_${rep}_1.log &"
 
