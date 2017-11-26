@@ -397,7 +397,7 @@ public class Worker extends Thread {
 
                             //System.out.println("REPLY IS = " + new String(message));
                         }
-                        byteBuffersGlue[serverIdx] = Parser.getSingleResponse(setResponses);
+                        //byteBuffersGlue[serverIdx] = Parser.getSingleResponse(setResponses);
                         break;
                     case GET:
                         numBytesRead = serverSocketChannels.get(serverIdx).read(byteBuffersGlue[serverIdx]);
