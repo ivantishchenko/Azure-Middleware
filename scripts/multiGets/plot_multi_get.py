@@ -219,7 +219,7 @@ class ExperimentPlotter:
         #R_STD = [x / 1000 for x in R_STD]
 
         clients = self.KEY_RANGE
-        ticks = self.KEY_RANGE
+        ticks = list(range(10))
 
         #print(clients)
         #print(T_total)
@@ -256,7 +256,7 @@ class ExperimentPlotter:
 
 # PLOTTING
 
-path = "/home/ivan/asl-fall17-project/experiments/logfiles/multiGets/logfiles_multiGET_nonshard_Client"
+path = "/home/ivan/asl-fall17-project/experiments/logfiles/multiGets/logfiles_multiGET_shard_Client"
 
 plotter = ExperimentPlotter()
 plotter.set_params(3, path, 6, 1)
