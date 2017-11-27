@@ -150,9 +150,9 @@ public class ShutDownHook extends Thread{
             int len = (int) finalLen.stream().mapToInt(x -> x).average().getAsDouble();
             double wait = finalWait.stream().mapToDouble(x -> x).average().getAsDouble() / 1000000;
             double serve = finalServe.stream().mapToDouble(x -> x).average().getAsDouble() / 1000000;
-            int gets = (int) finalGets.stream().mapToInt(x -> x).average().getAsDouble();
-            int sets = (int) finalSets.stream().mapToInt(x -> x).average().getAsDouble();
-            int multiGets= (int) finalMultiGets.stream().mapToInt(x -> x).average().getAsDouble();
+            int gets = (int) finalGets.stream().mapToInt(x -> x).sum();
+            int sets = (int) finalSets.stream().mapToInt(x -> x).sum();
+            int multiGets= (int) finalMultiGets.stream().mapToInt(x -> x).sum();
             int cacheMissesCount = workersPool.stream().mapToInt(x -> x.getStatistics().getCacheMissCount()).sum();
 
             double R_window = finalR.stream().mapToDouble(x -> x).average().getAsDouble();

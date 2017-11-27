@@ -20,11 +20,13 @@ do
     do
         for rep in `seq 1 3`;
         do
-            cmd1="${cmdpart_GET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_GET_CLIENT}/${w}/baselineMW_${c}_${rep}_1.log"
-            cmd2="${cmdpart_GET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_GET_CLIENT}/${w}/baselineMW_${c}_${rep}_2.log"
+            cmd1="${cmdpart_GET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_GET_CLIENT_ADD}/${w}/baselineMW_${c}_${rep}_1.log"
+            cmd2="${cmdpart_GET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_GET_CLIENT_ADD}/${w}/baselineMW_${c}_${rep}_2.log"
+            cmd3="${cmdpart_GET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_GET_CLIENT_ADD}/${w}/baselineMW_${c}_${rep}_3.log"
+            cmd4="${cmdpart_GET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_GET_CLIENT_ADD}/${w}/baselineMW_${c}_${rep}_4.log"
 
-            cmd_mw1="${CMD_PART_MW1} -t ${w} > ${LOG_FILE_DIR_DOUBLE_GET_MW}/${w}/baselineMW_${c}_${rep}_1.log &"
-            cmd_mw2="${CMD_PART_MW2} -t ${w} > ${LOG_FILE_DIR_DOUBLE_GET_MW}/${w}/baselineMW_${c}_${rep}_2.log &"
+            cmd_mw1="${CMD_PART_MW1} -t ${w} > ${LOG_FILE_DIR_DOUBLE_GET_MW_ADD}/${w}/baselineMW_${c}_${rep}_1.log &"
+            cmd_mw2="${CMD_PART_MW2} -t ${w} > ${LOG_FILE_DIR_DOUBLE_GET_MW_ADD}/${w}/baselineMW_${c}_${rep}_2.log &"
 
             echo "Executing middleware part"
 
@@ -36,6 +38,9 @@ do
             echo "Executing client part"
             ssh ${user}@${client1} $cmd1 &
             ssh ${user}@${client1} $cmd2 &
+
+            ssh ${user}@${client2} $cmd3 &
+            ssh ${user}@${client2} $cmd4 &
 
             wait
             echo "Killing MW"
