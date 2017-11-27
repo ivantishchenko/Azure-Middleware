@@ -393,11 +393,20 @@ public class Worker extends Thread {
                             //System.arraycopy(byteBuffersGlue[i].array(), 0, message, 0, numBytesRead);
 
                             if (numBytesRead == -1) serverSocketChannels.get(i).close();
-                            else setResponses.add(byteBuffersGlue[i]);
+                            else {
+                                setResponses.add(byteBuffersGlue[i]);
+
+                                byte[] message = new byte[numBytesRead];
+                                System.arraycopy(byteBuffersGlue[i].array(), 0, message, 0, numBytesRead);
+                                String checkStr = new String(message);
+                                if (checkStr.toLowerCase().contains("error")) {
+                                    serverIdx = i;
+                                }
+                            }
 
                             //System.out.println("REPLY IS = " + new String(message));
+
                         }
-                        //byteBuffersGlue[serverIdx] = Parser.getSingleResponse(setResponses);
                         break;
                     case GET:
                         numBytesRead = serverSocketChannels.get(serverIdx).read(byteBuffersGlue[serverIdx]);
@@ -413,20 +422,6 @@ public class Worker extends Thread {
                             ArrayList<byte[]> responses= new ArrayList<>();
                             for (int i = 0; i < serversNumber; i++) {
                                 byte[] msg = readAll(i);
-//                                    byte[] msg;
-//                                    String checkString;
-//                                    int totalRead = 0;
-//                                    do {
-//                                        System.out.println("GOIN TO READ");
-//                                        numBytesRead = serverSocketChannels.get(i).read(byteBuffersGlue[i]);
-//                                        totalRead += numBytesRead;
-//                                        System.out.println("Num bytes READ " + numBytesRead);
-//                                        msg = new byte[totalRead];
-//                                        System.arraycopy(byteBuffersGlue[i].array(), 0, msg, 0, totalRead);
-//                                        checkString = new String(msg);
-//                                        System.out.println("Glued response : " + checkString);
-//                                    } while (!checkString.contains("END\r\n"));
-//                                    System.out.println("FINALLY Glued response : " + checkString);
                                 responses.add(msg);
 
                             }
@@ -436,20 +431,6 @@ public class Worker extends Thread {
                         }
                         else {
                             readAll(serverIdx);
-//                                byte[] msg;
-//                                String checkString;
-//                                int totalRead = 0;
-//                                do {
-//                                    System.out.println("GOIN TO READ");
-//                                    numBytesRead = serverSocketChannels.get(serverIdx).read(byteBuffersGlue[serverIdx]);
-//                                    totalRead += numBytesRead;
-//                                    System.out.println("Num bytes READ " + numBytesRead);
-//                                    msg = new byte[totalRead];
-//                                    System.arraycopy(byteBuffersGlue[serverIdx].array(), 0, msg, 0, totalRead);
-//                                    checkString = new String(msg);
-//                                    System.out.println("Glued response : " + checkString);
-//                                } while (!checkString.contains("END\r\n"));
-//                                System.out.println("FINALLY Glued response : " + checkString);
                         }
                         break;
                     default:
