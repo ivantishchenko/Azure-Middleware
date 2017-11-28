@@ -1,15 +1,15 @@
-PING tivanforaslvms4.westeurope.cloudapp.azure.com (52.166.235.164) 56(84) bytes of data.
-64 bytes from 52.166.235.164: icmp_seq=1 ttl=55 time=2.28 ms
-64 bytes from 52.166.235.164: icmp_seq=2 ttl=55 time=2.45 ms
-64 bytes from 52.166.235.164: icmp_seq=3 ttl=55 time=2.38 ms
-64 bytes from 52.166.235.164: icmp_seq=4 ttl=55 time=2.51 ms
-64 bytes from 52.166.235.164: icmp_seq=5 ttl=55 time=2.28 ms
-64 bytes from 52.166.235.164: icmp_seq=6 ttl=55 time=2.39 ms
-64 bytes from 52.166.235.164: icmp_seq=7 ttl=55 time=2.82 ms
-64 bytes from 52.166.235.164: icmp_seq=8 ttl=55 time=2.32 ms
-64 bytes from 52.166.235.164: icmp_seq=9 ttl=55 time=2.27 ms
-64 bytes from 52.166.235.164: icmp_seq=10 ttl=55 time=2.42 ms
+PING tivanforaslvms4.westeurope.cloudapp.azure.com (40.68.245.229) 56(84) bytes of data.
+64 bytes from 40.68.245.229: icmp_seq=1 ttl=55 time=3.43 ms
+64 bytes from 40.68.245.229: icmp_seq=2 ttl=55 time=3.32 ms
+64 bytes from 40.68.245.229: icmp_seq=3 ttl=55 time=3.97 ms
+64 bytes from 40.68.245.229: icmp_seq=4 ttl=55 time=3.77 ms
+64 bytes from 40.68.245.229: icmp_seq=5 ttl=55 time=2.68 ms
+64 bytes from 40.68.245.229: icmp_seq=6 ttl=55 time=2.67 ms
+64 bytes from 40.68.245.229: icmp_seq=7 ttl=55 time=2.42 ms
+64 bytes from 40.68.245.229: icmp_seq=8 ttl=55 time=3.58 ms
+64 bytes from 40.68.245.229: icmp_seq=9 ttl=55 time=5.76 ms
+64 bytes from 40.68.245.229: icmp_seq=10 ttl=55 time=2.44 ms
 
 --- tivanforaslvms4.westeurope.cloudapp.azure.com ping statistics ---
-10 packets transmitted, 10 received, 0% packet loss, time 9073ms
-rtt min/avg/max/mdev = 2.273/2.416/2.827/0.166 ms
+10 packets transmitted, 10 received, 0% packet loss, time 9057ms
+rtt min/avg/max/mdev = 2.422/3.407/5.760/0.949 ms

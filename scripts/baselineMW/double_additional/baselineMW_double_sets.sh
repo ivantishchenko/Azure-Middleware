@@ -3,28 +3,31 @@
 parent_dir=$(dirname $PWD)
 source ${parent_dir}/baseline_mw.sh
 
-create_out_dirs_clients
-create_out_dirs_mw
+#create_out_dirs_clients
+#create_out_dirs_mw
 
 # launch MEMCACHED
 ssh -f ${user}@${server} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
 
+
+MAX_VC=32
+MAX_WT=64
 # repeat W times
-for w in "${workers[@]}";
-do
-    echo "Number of workers = ${w}"
+#for w in "${workers[@]}";
+#do
+    echo "Number of workers = ${MAX_WT}"
     # launch MW with w threads
     for c in "${clients[@]}";
     do
         for rep in `seq 1 3`;
         do
-            cmd1="${cmdpart_SET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_SET_CLIENT_ADD}/${w}/baselineMW_${c}_${rep}_1.log"
-            cmd2="${cmdpart_SET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_SET_CLIENT_ADD}/${w}/baselineMW_${c}_${rep}_2.log"
-            cmd3="${cmdpart_SET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_SET_CLIENT_ADD}/${w}/baselineMW_${c}_${rep}_3.log"
-            cmd4="${cmdpart_SET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_SET_CLIENT_ADD}/${w}/baselineMW_${c}_${rep}_4.log"
+            cmd1="${cmdpart_SET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_SET_CLIENT_ADD}/${MAX_WT}/baselineMW_${c}_${rep}_1.log"
+            cmd2="${cmdpart_SET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_SET_CLIENT_ADD}/${MAX_WT}/baselineMW_${c}_${rep}_2.log"
+            cmd3="${cmdpart_SET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_SET_CLIENT_ADD}/${MAX_WT}/baselineMW_${c}_${rep}_3.log"
+            cmd4="${cmdpart_SET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_SET_CLIENT_ADD}/${MAX_WT}/baselineMW_${c}_${rep}_4.log"
 
-            cmd_mw1="${CMD_PART_MW1} -t ${w} > ${LOG_FILE_DIR_DOUBLE_SET_MW_ADD}/${w}/baselineMW_${c}_${rep}_1.log &"
-            cmd_mw2="${CMD_PART_MW2} -t ${w} > ${LOG_FILE_DIR_DOUBLE_SET_MW_ADD}/${w}/baselineMW_${c}_${rep}_2.log &"
+            cmd_mw1="${CMD_PART_MW1} -t ${MAX_WT} > ${LOG_FILE_DIR_DOUBLE_SET_MW_ADD}/${MAX_WT}/baselineMW_${c}_${rep}_1.log &"
+            cmd_mw2="${CMD_PART_MW2} -t ${MAX_WT} > ${LOG_FILE_DIR_DOUBLE_SET_MW_ADD}/${MAX_WT}/baselineMW_${c}_${rep}_2.log &"
 
             echo "Executing middleware part"
 
@@ -53,6 +56,6 @@ do
 
         done
     done
-done
+#done
 
 echo "Done executing"

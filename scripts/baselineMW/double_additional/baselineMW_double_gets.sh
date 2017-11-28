@@ -4,29 +4,32 @@ parent_dir=$(dirname $PWD)
 source ${parent_dir}/baseline_mw.sh
 
 
-POPULATE_CMD1="memtier_benchmark-master/memtier_benchmark --protocol=memcache_text --ratio=1:0 --expiry-range=9999-10000 --key-maximum=10000 --data-size=1024 --server=${server_privat1} --port=${server_port} --test-time=30 --clients=2 --threads=2"
+POPULATE_CMD1="memtier_benchmark-master/memtier_benchmark --protocol=memcache_text --ratio=1:0 --expiry-range=9999-10000 --key-maximum=10000 --data-size=1024 --server=${server_privat} --port=${server_port} --test-time=30 --clients=2 --threads=2"
 
-echo "Populate servers"
-ssh ${user}@${client1} $POPULATE_CMD1 &
+#echo "Populate servers"
+#ssh ${user}@${client1} $POPULATE_CMD1 &
 
-wait
+#wait
+
+MAX_VC=32
+MAX_WT=64
 
 # repeat W times
-for w in "${workers[@]}";
-do
-    echo "Number of workers = ${w}"
+#for w in "${workers[@]}";
+#do
+    echo "Number of workers = ${MAX_WT}"
     # launch MW with w threads
     for c in "${clients[@]}";
     do
         for rep in `seq 1 3`;
         do
-            cmd1="${cmdpart_GET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_GET_CLIENT_ADD}/${w}/baselineMW_${c}_${rep}_1.log"
-            cmd2="${cmdpart_GET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_GET_CLIENT_ADD}/${w}/baselineMW_${c}_${rep}_2.log"
-            cmd3="${cmdpart_GET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_GET_CLIENT_ADD}/${w}/baselineMW_${c}_${rep}_3.log"
-            cmd4="${cmdpart_GET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_GET_CLIENT_ADD}/${w}/baselineMW_${c}_${rep}_4.log"
+            cmd1="${cmdpart_GET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_GET_CLIENT_ADD}/${MAX_WT}/baselineMW_${c}_${rep}_1.log"
+            cmd2="${cmdpart_GET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_GET_CLIENT_ADD}/${MAX_WT}/baselineMW_${c}_${rep}_2.log"
+            cmd3="${cmdpart_GET} --server=${middleware1_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_GET_CLIENT_ADD}/${MAX_WT}/baselineMW_${c}_${rep}_3.log"
+            cmd4="${cmdpart_GET} --server=${middleware2_privat} --port=${mw_port} --test-time=${time} --clients=${c} --threads=${threads_double} --out-file=${LOG_FILE_DIR_DOUBLE_GET_CLIENT_ADD}/${MAX_WT}/baselineMW_${c}_${rep}_4.log"
 
-            cmd_mw1="${CMD_PART_MW1} -t ${w} > ${LOG_FILE_DIR_DOUBLE_GET_MW_ADD}/${w}/baselineMW_${c}_${rep}_1.log &"
-            cmd_mw2="${CMD_PART_MW2} -t ${w} > ${LOG_FILE_DIR_DOUBLE_GET_MW_ADD}/${w}/baselineMW_${c}_${rep}_2.log &"
+            cmd_mw1="${CMD_PART_MW1} -t ${MAX_WT} > ${LOG_FILE_DIR_DOUBLE_GET_MW_ADD}/${MAX_WT}/baselineMW_${c}_${rep}_1.log &"
+            cmd_mw2="${CMD_PART_MW2} -t ${MAX_WT} > ${LOG_FILE_DIR_DOUBLE_GET_MW_ADD}/${MAX_WT}/baselineMW_${c}_${rep}_2.log &"
 
             echo "Executing middleware part"
 
@@ -55,6 +58,6 @@ do
 
         done
     done
-done
+#done
 
 echo "Done executing"
