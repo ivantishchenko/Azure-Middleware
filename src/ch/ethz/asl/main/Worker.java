@@ -441,6 +441,10 @@ public class Worker extends Thread {
                 // reply to client
                 //System.out.println("0 RESPONSES");
                 long endServiceTime = System.nanoTime();
+                // instrumentation
+                long serviceTime = endServiceTime - startServiceTime;
+                statistics.setServiceTime(statistics.getServiceTime() + serviceTime);
+
 
                 //byte[] msg = new byte[numBytesRead];
                 //System.arraycopy(byteBuffersGlue[serverIdx].array(), 0, msg, 0, numBytesRead);
@@ -455,14 +459,7 @@ public class Worker extends Thread {
                     byteBuffersGlue[i].clear();
                 }
 
-                // instrumentation
-                long serviceTime = endServiceTime - startServiceTime;
-                statistics.setServiceTime(statistics.getServiceTime() + serviceTime);
-                            // repsonse time histrogram
-
-
-                    // wait for responses from all servers
-                    // use a semaphore to check the completion of requests
+                // repsonse time histrogram
                 long sendBackClientTime = System.nanoTime();
                 long responseTime = sendBackClientTime - request.getEnterQueueTime();
 
