@@ -53,6 +53,7 @@ class ExperimentPlotter:
                         avg_throughput = line.split()[4]
                     if line.startswith("Average response time"):
                         avg_response_time = line.split()[5]
+                        print(avg_response_time)
 
         file.close()
 
@@ -115,7 +116,7 @@ class ExperimentPlotter:
                         # AVG response times
                         avg_response_time += response
 
-                    avg_response_time /= self.MACHINES_NUMBER
+                    avg_response_time /= MACHINES_RANGE
                     # at this point we have aggregates from all machines
                     final_throughput += aggregate_throughput
                     final_response_time += avg_response_time
@@ -170,11 +171,16 @@ class ExperimentPlotter:
         plt.savefig(filename1)
         plt.gcf().clear()
 
+
+
         legends = []
         legends_name = []
         for i in range(len(self.WORKERS_RANGE)):
             R = R_workers[i]
             R_STD = R_STD_workers[i]
+
+            clients = [x * self.THREAD_PER_CLIENT * self.MACHINES_NUMBER for x in range(self.CLIENTS_RANGE_BEG, self.CLIENTS_RANGE_END + 1, self.CLIENTS_RANGE_STEP)]
+            ticks = [x * self.THREAD_PER_CLIENT * self.MACHINES_NUMBER for x in range(self.CLIENTS_RANGE_BEG, self.CLIENTS_RANGE_END + 1, self.CLIENTS_RANGE_STEP)]
 
             # response time
             plt.figure(2)
@@ -200,11 +206,11 @@ class ExperimentPlotter:
 path = "/home/ivan/asl-fall17-project/experiments/logfiles/throughputWrites/logfiles_throughputWrites_MW"
 plotter = ExperimentPlotter()
 plotter.INSIDE_MW = True
-plotter.set_params(3, path, 3, 2, 2, [1, 33, 4])
+plotter.set_params(3, path, 6, 1, 2, [1, 33, 4])
 plotter.plot_baseline_aggregate("throughput_writes_T.png", "throughput_writes_R.png")
 
 path = "/home/ivan/asl-fall17-project/experiments/logfiles/throughputWrites/logfiles_throughputWrites_Client"
 plotter = ExperimentPlotter()
 plotter.INSIDE_MW = False
-plotter.set_params(3, path, 3, 2, 2, [1, 33, 4])
+plotter.set_params(3, path, 6, 1, 2, [1, 33, 4])
 plotter.plot_baseline_aggregate("throughput_writesClient_T.png", "throughput_writesClient_R.png")
