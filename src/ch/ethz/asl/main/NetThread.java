@@ -10,9 +10,9 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class NetThread extends Thread {
     // logging
@@ -26,6 +26,15 @@ public class NetThread extends Thread {
     private String middlewareIP;
     private int middlewarePort;
 
+    private int arrivalRate = 0;
+    private List<Integer> arrivalRateValues;
+    private AtomicInteger arrivalRateCounter;
+
+
+    public List<Integer> getArrivalRateValues() {
+        return arrivalRateValues;
+    }
+
     public NetThread(LinkedBlockingQueue<Request> reqQueue, String ip, int port) {
         this.middlewarePort = port;
         this.middlewareIP = ip;
@@ -33,6 +42,9 @@ public class NetThread extends Thread {
         buffer = ByteBuffer.allocate(MESSAGE_SIZE);
         //Queue
         requestQueue = reqQueue;
+
+        arrivalRateValues = new ArrayList<>();
+        arrivalRateCounter = new AtomicInteger();
     }
 
     @Override
@@ -55,6 +67,8 @@ public class NetThread extends Thread {
         serverChannel.configureBlocking(false);
         serverChannel.register(selector, SelectionKey.OP_ACCEPT);
 
+
+        doInstrumentation();
         while (true) {
             selector.select();
             Set<SelectionKey> keys = selector.selectedKeys();
@@ -69,6 +83,8 @@ public class NetThread extends Thread {
                 } else if (key.isReadable()) {
                     // Channel is ready for reading
                     read(key);
+                    //arrivalRate++;
+                    arrivalRateCounter.incrementAndGet();
                 }
                 it.remove();
 
@@ -120,6 +136,26 @@ public class NetThread extends Thread {
             }
 
         }
+    }
+
+    private void doInstrumentation() {
+        int initialDelay = 0; // start after 1 second
+        int period = (int) (Statistics.testInterval * 1000);        // repeat every N seconds
+
+        Timer timer = new Timer();
+
+        TimerTask task = new TimerTask() {
+
+            public void run() {
+                // new job count - prev job count gives job count in the interval
+
+                //arrivalRateValues.add(arrivalRate);
+                //arrivalRate = 0;
+                arrivalRateValues.add(arrivalRateCounter.getAndSet(0));
+            }
+        };
+
+        timer.scheduleAtFixedRate(task, initialDelay, period);
     }
 
 

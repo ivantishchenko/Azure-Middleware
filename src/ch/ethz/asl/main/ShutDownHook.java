@@ -17,9 +17,15 @@ public class ShutDownHook extends Thread{
 
     private static final Logger log = LogManager.getLogger(ShutDownHook.class);
     public List<Worker> workersPool;
+    public NetThread networkThread;
 
     public ShutDownHook(List<Worker> pool) {
         this.workersPool = pool;
+    }
+
+    public ShutDownHook(List<Worker> pool, NetThread nt) {
+        this.workersPool = pool;
+        this.networkThread = nt;
     }
 
     public ShutDownHook() {
@@ -168,6 +174,7 @@ public class ShutDownHook extends Thread{
             System.out.println("Number of MULTI GET = " + multiGets);
             System.out.println("Number of Cache misses = " + cacheMissesCount);
 
+            System.out.println("Arrival rate (lambda) = " + Arrays.toString(networkThread.getArrivalRateValues().toArray()));
 
             System.out.println("\n");
 
