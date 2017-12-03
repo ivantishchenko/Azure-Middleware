@@ -15,7 +15,7 @@ class Histogram:
         self.LOGFILES_PATH = path
         self.INSIDE_MW = flag
 
-    HISTOGRAM_LEN = 40
+    HISTOGRAM_LEN = 60
     TIME = 60
 
     def cdfToPdf(self, response_percentage, total_num):
@@ -70,7 +70,7 @@ class Histogram:
         file.close()
 
 
-        print(len(response_number_gets))
+        #print(len(response_number_gets))
         pdf_SET = self.cdfToPdf(response_number_sets, SET_NUM)
         pdf_GET = self.cdfToPdf(response_number_gets, GET_NUM)
 
@@ -189,21 +189,20 @@ class Histogram:
         OUT_HISTO = []
         for i in range(self.HISTOGRAM_LEN):
             element = (OUT_TIMES[i], OUT_NUMBERS[i])
-            print(element)
+            # rint(element)
             OUT_HISTO.append(element)
 
 
-        print(OUT_TIMES)
-        print(OUT_NUMBERS)
-        print(len(OUT_NUMBERS))
-        print(len(OUT_TIMES))
-        print(len(R_STD))
-
+        # print(OUT_TIMES)
+        # print(OUT_NUMBERS)
+        # print(len(OUT_NUMBERS))
+        # print(len(OUT_TIMES))
+        # print(len(R_STD))
 
         plt.bar(OUT_TIMES, OUT_NUMBERS, 0.1, yerr=R_STD, error_kw=dict(ecolor='red', lw=1, capsize=2, capthick=2))
         plt.savefig(filename)
         plt.gcf().clear()
-
+        print(max(OUT_NUMBERS))
 
     def plot_histogram_MW(self, filename):
         # Build
@@ -250,20 +249,27 @@ class Histogram:
         OUT_HISTO = []
         for i in range(self.HISTOGRAM_LEN):
             element = (OUT_TIMES[i], OUT_NUMBERS[i])
-            print(element)
+            # print(element)
             OUT_HISTO.append(element)
 
 
-        print(OUT_TIMES)
-        print(OUT_NUMBERS)
-        print(len(OUT_NUMBERS))
-        print(len(OUT_TIMES))
-        print(len(R_STD))
+        # print(OUT_TIMES)
+        # print(OUT_NUMBERS)
+        # print(len(OUT_NUMBERS))
+        # print(len(OUT_TIMES))
+        # print(len(R_STD))
 
+        OUT_NUMBERS = [x / 10 for x in OUT_NUMBERS]
+        R_STD = [x / 10 for x in R_STD]
 
+        # fig, ax = plt.subplots()
+        # ax.bar(OUT_TIMES, OUT_NUMBERS, 0.1, yerr=R_STD, error_kw=dict(ecolor='red', lw=1, capsize=2, capthick=2))
+        # ax.set_yticks(OUT_NUMBERS)
+        # plt.savefig(filename)
         plt.bar(OUT_TIMES, OUT_NUMBERS, 0.1, yerr=R_STD, error_kw=dict(ecolor='red', lw=1, capsize=2, capthick=2))
         plt.savefig(filename)
         plt.gcf().clear()
+        print(max(OUT_TIMES))
 
 
 path = "/home/ivan/asl-fall17-project/experiments/logfiles/multiGets/logfiles_multiGET_nonshard_Client"
