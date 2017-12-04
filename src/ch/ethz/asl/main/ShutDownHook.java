@@ -135,6 +135,8 @@ public class ShutDownHook extends Thread{
 
             ArrayList<Long> finalResponseTimes = new ArrayList<>();
             //ArrayList<Integer> cacheMisses = new ArrayList<>();
+
+            //ArrayList<ArrayList<Integer>> serverLoads = new ArrayList<ArrayList<Integer>>(MiddlewareMain.serversNum);
             workersPool.forEach(worker -> {
                 List<Long> responseTimes = worker.getStatistics().getResponseTimesList();
 
@@ -148,8 +150,27 @@ public class ShutDownHook extends Thread{
                 //Histogram h = new Histogram(responseTimes);
                 //h.printHistogram();
                 responseTimes.forEach(x -> finalResponseTimes.add(x));
+
+
             });
 
+
+            int[] serverLoads = new int[MiddlewareMain.serversNum];
+            for (int i = 0; i < workersPool.size(); i++) {
+                //serverLoads[i] = 0;
+                HashMap<Integer, Integer> histo = workersPool.get(i).getStatistics().getEqualLoadHistogram();
+                for (int j = 0; j < MiddlewareMain.serversNum; j++) {
+                    System.out.println("Worker # "+ workersPool.get(i).getId() + " server # " + i + " load = "+ histo.get(j));
+                    serverLoads[j] += histo.get(j);
+                    //serverLoads.get(0).add(histo.get(i));
+                }
+            }
+
+            System.out.println(Arrays.toString(serverLoads));
+
+            //serverLoads.forEach(serverLoad -> System.out.println(serverLoad.stream().mapToInt(x -> x).average()) );
+
+            System.out.println("\n");
             System.out.println("FINAL STATS");
             int T = finalT.stream().mapToInt(x -> x).sum();
             double R = finalResponseTimes.stream().mapToLong(x -> x).average().getAsDouble() / 1000000;

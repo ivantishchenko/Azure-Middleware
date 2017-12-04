@@ -93,6 +93,10 @@ public class Worker extends Thread {
         }
 
 
+        for (int i = 0; i < serversNumber; i++) {
+            statistics.getEqualLoadHistogram().put(i, 0);
+        }
+
     }
 
     private void openServerConnections() throws IOException {
@@ -137,6 +141,9 @@ public class Worker extends Thread {
 
         roundRobinCounter.increment();
         responsesLeft++;
+
+        statistics.getEqualLoadHistogram().put(serverIdx, statistics.getEqualLoadHistogram().get(serverIdx) + 1);
+
         return serverIdx;
     }
 

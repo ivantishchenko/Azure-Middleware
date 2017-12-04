@@ -26,6 +26,7 @@ class Histogram:
 
         for i in range(1, len(pdf)):
             pdf[i] = (((response_percentage[i] - response_percentage[i - 1]) * total_num) / 100.0) * self.TIME
+            pdf[i] *= 10
             # pdf[i] = (((response_number[i] * total_num) / 100) * self.TIME ) - pdf[i - 1]
             #print("PDF  " + str(i) +  "  "+str(pdf[i]))
         return pdf
@@ -199,7 +200,11 @@ class Histogram:
         # print(len(OUT_TIMES))
         # print(len(R_STD))
 
+            # OUT_NUMBERS = [x / 10 for x in OUT_NUMBERS]
+        # R_STD = [x / 10 for x in R_STD]
         plt.bar(OUT_TIMES, OUT_NUMBERS, 0.1, yerr=R_STD, error_kw=dict(ecolor='red', lw=1, capsize=2, capthick=2))
+        plt.ylabel('Number of requests')
+        plt.xlabel('Response time (msec)')
         plt.savefig(filename)
         plt.gcf().clear()
         print(max(OUT_NUMBERS))
@@ -259,26 +264,28 @@ class Histogram:
         # print(len(OUT_TIMES))
         # print(len(R_STD))
 
-        OUT_NUMBERS = [x / 10 for x in OUT_NUMBERS]
-        R_STD = [x / 10 for x in R_STD]
+        # OUT_NUMBERS = [x / 10 for x in OUT_NUMBERS]
+        # R_STD = [x / 10 for x in R_STD]
 
         # fig, ax = plt.subplots()
         # ax.bar(OUT_TIMES, OUT_NUMBERS, 0.1, yerr=R_STD, error_kw=dict(ecolor='red', lw=1, capsize=2, capthick=2))
         # ax.set_yticks(OUT_NUMBERS)
         # plt.savefig(filename)
         plt.bar(OUT_TIMES, OUT_NUMBERS, 0.1, yerr=R_STD, error_kw=dict(ecolor='red', lw=1, capsize=2, capthick=2))
+        plt.ylabel('Number of requests')
+        plt.xlabel('Response time (msec)')
         plt.savefig(filename)
         plt.gcf().clear()
-        print(max(OUT_TIMES))
+        print(max(OUT_NUMBERS))
 
 
-path = "/home/ivan/asl-fall17-project/experiments/logfiles/multiGets/logfiles_multiGET_nonshard_Client"
+path = "/home/ivan/asl-fall17-project/experiments/logfiles/multiGets/logfiles_multiGET_shard_Client"
 inside_MW = False
 h = Histogram(path, inside_MW)
-h.plot_histogram_client("6_keys_nonshard_client.png")
+h.plot_histogram_client("6_keys_shard_client.png")
 
-path = "/home/ivan/asl-fall17-project/experiments/logfiles/multiGets/logfiles_multiGET_nonshard_MW"
+path = "/home/ivan/asl-fall17-project/experiments/logfiles/multiGets/logfiles_multiGET_shard_MW"
 inside_MW = True
 h = Histogram(path, inside_MW)
-h.plot_histogram_MW("6_keys_nonshard_MW.png")
+h.plot_histogram_MW("6_keys_shard_MW.png")
 
