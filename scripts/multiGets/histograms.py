@@ -202,7 +202,7 @@ class Histogram:
 
             # OUT_NUMBERS = [x / 10 for x in OUT_NUMBERS]
         # R_STD = [x / 10 for x in R_STD]
-        plt.bar(OUT_TIMES, OUT_NUMBERS, 0.1, yerr=R_STD, error_kw=dict(ecolor='red', lw=1, capsize=2, capthick=2))
+        plt.bar(OUT_TIMES, OUT_NUMBERS, 0.1, yerr=R_STD, error_kw=dict(ecolor='red', lw=1, capsize=2, elinewidth=0.5), color='blue', alpha=0.8)
         plt.ylabel('Number of requests')
         plt.xlabel('Response time (msec)')
         plt.savefig(filename)
@@ -271,7 +271,8 @@ class Histogram:
         # ax.bar(OUT_TIMES, OUT_NUMBERS, 0.1, yerr=R_STD, error_kw=dict(ecolor='red', lw=1, capsize=2, capthick=2))
         # ax.set_yticks(OUT_NUMBERS)
         # plt.savefig(filename)
-        plt.bar(OUT_TIMES, OUT_NUMBERS, 0.1, yerr=R_STD, error_kw=dict(ecolor='red', lw=1, capsize=2, capthick=2))
+
+        plt.bar(OUT_TIMES, OUT_NUMBERS, 0.1, yerr=R_STD, error_kw=dict(ecolor='red', lw=1, capsize=2, elinewidth=0.5), color='blue', alpha=0.8)
         plt.ylabel('Number of requests')
         plt.xlabel('Response time (msec)')
         plt.savefig(filename)

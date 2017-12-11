@@ -3,6 +3,7 @@ import sys
 from operator import add
 from matplotlib import pyplot as plt
 from statistics import stdev
+import operator
 
 class ExperimentPlotter:
 
@@ -11,6 +12,8 @@ class ExperimentPlotter:
     MACHINES_NUMBER = 3
     THREAD_PER_CLIENT = 2
 
+    THINK_TIME = 0.00128
+    THINK_TIME = 0.0
     # CHANGE
     RUN_TIME = 60
     # See the same in bash script
@@ -53,11 +56,11 @@ class ExperimentPlotter:
                         avg_throughput = line.split()[4]
                     if line.startswith("Average response time"):
                         avg_response_time = line.split()[5]
-                        print(avg_response_time)
+                        #print(avg_response_time)
 
         file.close()
 
-        print(logfile)
+        #print(logfile)
         return float(avg_throughput), float(avg_response_time)
 
     def extractParams(self, logfile):
@@ -69,8 +72,118 @@ class ExperimentPlotter:
 
         file.close()
 
-        print(logfile)
+        #print(logfile)
         return float(avg_throughput), float(avg_response_time)
+
+    def getConfigThroughput(self, WT_num, VC_num, MACHINE_num):
+        config_throughput = 0
+        for machine in range(1, MACHINE_num + 1):
+            rep_thoughput = 0
+            for repetition in range(1, self.REP_NUMBER + 1):
+                logfile_name = self.LOGFILES_PATH + "/" + str(WT_num) + "/throughputWrites_{}_{}_{}.log".format(VC_num, repetition, machine)
+                # print(logfile_name)
+                if self.INSIDE_MW:
+                    T, _ = self.extractParamsMW(logfile_name)
+                    rep_thoughput += T
+                else:
+                    T, _ = self.extractParams(logfile_name)
+                    rep_thoughput += T
+
+            rep_thoughput /= self.REP_NUMBER
+            config_throughput += rep_thoughput
+        return config_throughput
+
+
+    def getConfigThroughputInter(self, WT_num, VC_num, MACHINE_num):
+        config_R = 0
+        for machine in range(1, MACHINE_num + 1):
+            rep_R = 0
+            for repetition in range(1, self.REP_NUMBER + 1):
+                logfile_name = self.LOGFILES_PATH + "/" + str(WT_num) + "/throughputWrites_{}_{}_{}.log".format(VC_num, repetition, machine)
+                # print(logfile_name)
+                if self.INSIDE_MW:
+                    _, R = self.extractParamsMW(logfile_name)
+                    rep_R += R
+                else:
+                    _, R = self.extractParams(logfile_name)
+                    rep_R += R
+            rep_R /= self.REP_NUMBER
+            config_R += rep_R
+
+        config_R /= MACHINE_num
+        config_R /= 1000
+
+        NumClients = VC_num * self.THREAD_PER_CLIENT * self.MACHINES_NUMBER
+        X = NumClients / (config_R + self.THINK_TIME)
+        return X
+
+    def getConfigTimeQueue(self, WT_num, VC_num, MACHINE_num):
+        time_config = 0
+        for machine in range(1, MACHINE_num + 1):
+            time_rep = 0
+            for repetition in range(1, self.REP_NUMBER + 1):
+                logfile_name = self.LOGFILES_PATH + "/" + str(WT_num) + "/throughputWrites_{}_{}_{}.log".format(VC_num, repetition, machine)
+                # print(logfile_name)
+                file = open(logfile_name, 'r')
+                for line in file:
+                    if line.startswith("FINAL STATS"):
+                        for line in file:
+                            if line.startswith("Average wait time in queue"):
+                                queue_time = float(line.split()[7])
+                file.close()
+                time_rep += queue_time
+
+            time_rep /= self.REP_NUMBER
+            time_config += time_rep
+
+        time_config /= MACHINE_num
+        return time_config
+
+
+    def getConfigQueueLen(self, WT_num, VC_num, MACHINE_num):
+        len_config = 0
+        for machine in range(1, MACHINE_num + 1):
+            len_rep = 0
+            for repetition in range(1, self.REP_NUMBER + 1):
+                logfile_name = self.LOGFILES_PATH + "/" + str(WT_num) + "/throughputWrites_{}_{}_{}.log".format(VC_num, repetition, machine)
+                # print(logfile_name)
+                file = open(logfile_name, 'r')
+                for line in file:
+                    if line.startswith("FINAL STATS"):
+                        for line in file:
+                            if line.startswith("Average queue length"):
+                                len_queue = float(line.split()[4])
+                file.close()
+                len_rep += len_queue
+
+            len_rep /= self.REP_NUMBER
+            len_config += len_rep
+
+        len_config /= MACHINE_num
+        return len_config
+
+    def getConfigServiceTime(self, WT_num, VC_num, MACHINE_num):
+        time_config = 0
+        for machine in range(1, MACHINE_num + 1):
+            time_rep = 0
+            for repetition in range(1, self.REP_NUMBER + 1):
+                logfile_name = self.LOGFILES_PATH + "/" + str(WT_num) + "/throughputWrites_{}_{}_{}.log".format(VC_num, repetition, machine)
+                # print(logfile_name)
+                file = open(logfile_name, 'r')
+                for line in file:
+                    if line.startswith("FINAL STATS"):
+                        for line in file:
+                            if line.startswith("Average service time"):
+                                serve_time = float(line.split()[5])
+                file.close()
+                time_rep += serve_time
+
+            time_rep /= self.REP_NUMBER
+            time_config += time_rep
+
+        time_config /= MACHINE_num
+        return time_config
+
 
     def plot_baseline_aggregate(self, filename1, filename2):
 
@@ -81,8 +194,10 @@ class ExperimentPlotter:
 
         if self.INSIDE_MW:
             MACHINES_RANGE = self.MW_NUMBER
+            print("On MW")
         else:
-            MACHINES_RANGE = self.MACHINES_NUMBER * self.THREAD_PER_CLIENT
+            MACHINES_RANGE = self.MACHINES_NUMBER
+            print("On clients")
 
         for worker in self.WORKERS_RANGE:
             # Build
@@ -103,7 +218,7 @@ class ExperimentPlotter:
 
                     for machine in range(1, MACHINES_RANGE + 1):
                         logfile_name = self.LOGFILES_PATH + "/" + str(worker) + "/throughputWrites_{}_{}_{}.log".format(virtual_client, repetition, machine)
-                        print(logfile_name)
+                        # print(logfile_name)
 
                         if self.INSIDE_MW:
                             throughput, response = self.extractParamsMW(logfile_name)
@@ -140,6 +255,8 @@ class ExperimentPlotter:
             R_STD_workers.append(R_STD)
 
 
+
+        peaks = list(range(self.CLIENTS_RANGE_BEG, self.CLIENTS_RANGE_END + 1, self.CLIENTS_RANGE_STEP))
         colors = ['b', 'm', 'y', 'g']
         markers = ['-x', '-^', '-o', '-d']
         legends = []
@@ -147,6 +264,37 @@ class ExperimentPlotter:
         for i in range(len(self.WORKERS_RANGE)):
             T = T_workers[i]
             T_STD = T_STD_workers[i]
+
+            # Measurments for the table
+            print("all T = {} ".format(T))
+            index, value = max(enumerate(T), key=operator.itemgetter(1))
+            maxThroughputVC = peaks[index]
+            print("WORKERS # {} MAX Throughput {} at VC = {}".format(self.WORKERS_RANGE[i], value, maxThroughputVC))
+
+
+
+            if self.INSIDE_MW:
+                config_T = self.getConfigThroughput(self.WORKERS_RANGE[i], maxThroughputVC, MACHINES_RANGE)
+                print("AVG T = {}".format(config_T))
+
+                config_T_inter = self.getConfigThroughputInter(self.WORKERS_RANGE[i], maxThroughputVC, MACHINES_RANGE)
+                print("AVG INTER T = {}".format(config_T_inter))
+
+                queue_time = self.getConfigTimeQueue(self.WORKERS_RANGE[i], maxThroughputVC, MACHINES_RANGE)
+                print("AVG QUEUE WAIT TIME T = {}".format(queue_time))
+
+                queue_len = self.getConfigQueueLen(self.WORKERS_RANGE[i], maxThroughputVC, MACHINES_RANGE)
+                print("AVG QUEUE LEN = {}".format(queue_len))
+
+                server_time = self.getConfigServiceTime(self.WORKERS_RANGE[i], maxThroughputVC, MACHINES_RANGE)
+                print("AVG SERVE TIME = {}".format(server_time))
+            else:
+                config_T = self.getConfigThroughput(self.WORKERS_RANGE[i], maxThroughputVC, MACHINES_RANGE)
+                print("AVG T = {}".format(config_T))
+
+            print("")
+            # Table end
+
 
             clients = [x * self.THREAD_PER_CLIENT * self.MACHINES_NUMBER for x in range(self.CLIENTS_RANGE_BEG, self.CLIENTS_RANGE_END + 1, self.CLIENTS_RANGE_STEP)]
             ticks = [x * self.THREAD_PER_CLIENT * self.MACHINES_NUMBER for x in range(self.CLIENTS_RANGE_BEG, self.CLIENTS_RANGE_END + 1, self.CLIENTS_RANGE_STEP)]
@@ -172,12 +320,18 @@ class ExperimentPlotter:
         plt.gcf().clear()
 
 
-
         legends = []
         legends_name = []
         for i in range(len(self.WORKERS_RANGE)):
             R = R_workers[i]
             R_STD = R_STD_workers[i]
+
+
+            # Measurments for the table
+            print("all R = {} ".format(R))
+            index, value = max(enumerate(R), key=operator.itemgetter(1))
+            maxResp = peaks[index]
+            print("WORKERS # {} MAX Response time {} at VC = {}".format(self.WORKERS_RANGE[i], value, maxResp))
 
             clients = [x * self.THREAD_PER_CLIENT * self.MACHINES_NUMBER for x in range(self.CLIENTS_RANGE_BEG, self.CLIENTS_RANGE_END + 1, self.CLIENTS_RANGE_STEP)]
             ticks = [x * self.THREAD_PER_CLIENT * self.MACHINES_NUMBER for x in range(self.CLIENTS_RANGE_BEG, self.CLIENTS_RANGE_END + 1, self.CLIENTS_RANGE_STEP)]

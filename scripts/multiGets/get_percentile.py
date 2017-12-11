@@ -124,7 +124,7 @@ class PercentilePlot:
         # response time
         plt.figure(2)
         plt.title("Multigets " + str(percentile) + "th percentile")
-        plt.errorbar(clients, R_total, yerr=R_STD, fmt='-o', ecolor='r')
+        plt.errorbar(clients, R_total, yerr=R_STD, fmt='-o', ecolor='r', color='blue', capsize=2, elinewidth=0.5, alpha=0.8)
         plt.xticks(ticks)
         plt.ylim(ymin=0)
         plt.xlim(xmin=0)

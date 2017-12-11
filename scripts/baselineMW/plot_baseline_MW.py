@@ -153,10 +153,12 @@ class ExperimentPlotter:
             ticks = [x * self.THREAD_PER_CLIENT * self.MACHINES_NUMBER for x in range(self.CLIENTS_RANGE_BEG, self.CLIENTS_RANGE_END + 1, self.CLIENTS_RANGE_STEP)]
 
             # throughput
+            print(T)
             plt.figure(1)
             print("WORKERS # {} MAX Throuthput {}".format(self.WORKERS_RANGE[i], max(T)))
+            print("")
+
             #plt.title("Throughput graph")
-            #print(T)
             p = plt.errorbar(clients, T, yerr=T_STD, fmt=markers[i], ecolor='r', color=colors[i])
             legends.append(p)
             legends_name.append("Worker threads # " + str(self.WORKERS_RANGE[i]))
@@ -183,8 +185,9 @@ class ExperimentPlotter:
 
             # response time
             plt.figure(2)
-            #print(R)
+            print(R)
             print("WORKERS # {} MAX Response {}".format(self.WORKERS_RANGE[i], max(R)))
+            print("")
 
             p = plt.errorbar(clients, R, yerr=R_STD, fmt=markers[i], ecolor='r', color=colors[i])
             legends.append(p)
@@ -245,3 +248,19 @@ class ExperimentPlotter:
 # plotter.set_params(3, path, 4, 1, 2, [1, 33, 4])
 # plotter.WORKERS_RANGE=[64]
 # plotter.plot_baseline_aggregate("ADD_double_baselineMW_get_agr_T.png","ADD_double_baselineMW_get_agr_R.png")
+
+# REDO GET DOUBLE
+#
+path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/redoGET/logfiles_baselineMW_double_GET_client"
+plotter = ExperimentPlotter()
+plotter.INSIDE_MW = False
+plotter.WORKERS_RANGE = [64]
+plotter.set_params(3, path, 2, 1, 2, [1, 33, 4])
+plotter.plot_baseline_aggregate("redo_double_baselineMWClient_get_agr_T.png","redo_double_baselineMWClient_get_agr_R.png")
+
+path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/redoGET/logfiles_baselineMW_double_GET_MW"
+plotter = ExperimentPlotter()
+plotter.INSIDE_MW = True
+plotter.WORKERS_RANGE = [64]
+plotter.set_params(3, path, 2, 1, 2, [1, 33, 4])
+plotter.plot_baseline_aggregate("redo_double_baselineMW_get_agr_T.png","redo_double_baselineMW_get_agr_R.png")

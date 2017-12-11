@@ -183,6 +183,8 @@ public class Worker extends Thread {
             // Loop over non empty splits
             for (int i = 0; i < splitRequests.size(); i++) {
 
+                statistics.getEqualLoadHistogram().put(i, statistics.getEqualLoadHistogram().get(i) + 1);
+
                 byte[] out = splitRequests.get(i);
                 log.info(Thread.currentThread().getId() + " Going to send: " + new String(out));
 

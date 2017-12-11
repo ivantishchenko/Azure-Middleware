@@ -160,7 +160,7 @@ public class ShutDownHook extends Thread{
                 //serverLoads[i] = 0;
                 HashMap<Integer, Integer> histo = workersPool.get(i).getStatistics().getEqualLoadHistogram();
                 for (int j = 0; j < MiddlewareMain.serversNum; j++) {
-                    System.out.println("Worker # "+ workersPool.get(i).getId() + " server # " + i + " load = "+ histo.get(j));
+                    System.out.println("Worker # "+ workersPool.get(i).getId() + " server # " + j + " load = "+ histo.get(j));
                     serverLoads[j] += histo.get(j);
                     //serverLoads.get(0).add(histo.get(i));
                 }

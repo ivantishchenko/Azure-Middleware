@@ -3,12 +3,13 @@
 parent_dir=$(dirname $PWD)
 source ${parent_dir}/baseline_mw.sh
 
-#POPULATE_CMD1="memtier_benchmark-master/memtier_benchmark --protocol=memcache_text --ratio=1:0 --expiry-range=9999-10000 --key-maximum=10000 --data-size=1024 --server=${server_privat} --port=${server_port} --test-time=30 --clients=2 --threads=2"
+POPULATE_CMD1="memtier_benchmark-master/memtier_benchmark --protocol=memcache_text --ratio=1:0 --expiry-range=9999-10000 --key-maximum=10000 --data-size=1024 --server=${server_privat} --port=${server_port} --test-time=30 --clients=2 --threads=2"
 
-#echo "Populate servers"
-#ssh ${user}@${client1} $POPULATE_CMD1 &
-
-#wait
+# launch MEMCACHED
+ssh -f ${user}@${server} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
+echo "Populate servers"
+ssh ${user}@${client1} $POPULATE_CMD1 &
+wait
 
 # repeat W times
 for w in "${workers[@]}";
