@@ -209,18 +209,18 @@ class ExperimentPlotter:
 
 # FINAL commands
 
-# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_single_SET_MW"
+# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_single_GET_MW"
 # plotter = ExperimentPlotter()
 # plotter.INSIDE_MW = True
 # plotter.set_params(3, path, 1, 2, 1, [1, 33, 4])
-# plotter.plot_baseline_aggregate("queueLen_baselineMWClient_set_agr.png","serveTime_baselineMWClient_set_agr.png")
+# plotter.plot_baseline_aggregate("queueLen_single_baselineMW_get_agr.png","serveTime_single_baselineMW_get_agr.png")
 
 
-path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_double_SET_MW"
-plotter = ExperimentPlotter()
-plotter.INSIDE_MW = True
-plotter.set_params(3, path, 2, 1, 2, [1, 33, 4])
-plotter.plot_baseline_aggregate("queueLen_double_baselineMW_set_agr.png","serveTime_double_baselineMW_set_agr.png")
+# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_double_GET_MW"
+# plotter = ExperimentPlotter()
+# plotter.INSIDE_MW = True
+# plotter.set_params(3, path, 2, 1, 2, [1, 33, 4])
+# plotter.plot_baseline_aggregate("queueLen_double_baselineMW_get_agr.png","serveTime_double_baselineMW_get_agr.png")
 
 # DOUBLE ADD
 
