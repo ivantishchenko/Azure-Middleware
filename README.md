@@ -111,7 +111,7 @@ The logfiles which were used in the report:
 **logfiles_baselineMW_double_SET_MW_ADD** - Additional client, write only, 2 middleware, MW measurements
 
 **Naming convention** each directory has **8, 16, 32, 64** subdirectories corresponding to WT. For clienr measurements the convention is **baselineMW_X_Y_Z.log**, **X** is the number of VC, **Y** - repetition's number, **Z** - memtier instance's number. 
-For the middleware files the convention is **baselineMW_X_Y_Z.log**, **X** -number of VC, **Y** - middleware instance's number, **Z** - repetition's number.
+For the middleware files the convention is **baselineMW_X_Y_Z.log**, **X** -number of VC, **Y** - repetition's number, **Z** - middleware instance's number.
 
 #### Section 4, Throughput for Writes.
 
@@ -122,7 +122,7 @@ For the middleware files the convention is **baselineMW_X_Y_Z.log**, **X** -numb
 **logfiles_throughputWrites_MW** - measurements from the MW
 
 **Naming convention** each directory has **8, 16, 32, 64** subdirectories corresponding to WT. For clienr measurements the convention is **throughputWrites_X_Y_Z.log**, **X** is the number of VC, **Y** - repetition's number, **Z** - memtier instance's number. 
-For the middleware files the convention is **throughputWrites_X_Y_Z.log**, **X** -number of VC, **Y** - middleware instance's number, **Z** - repetition's number.
+For the middleware files the convention is **throughputWrites_X_Y_Z.log**, **X** -number of VC. **Y** - repetition's number. **Z** - middleware instance's number.
 
 #### Section 5, Gets and Multi-gets
 
@@ -136,7 +136,7 @@ For the middleware files the convention is **throughputWrites_X_Y_Z.log**, **X**
 **logfiles_multiGET_sard_Client** - sharded mode, measurements from memtier
 **logfiles_multiGET_shard_MW** - sharded mode, measurements from Middleware
 
-**Naming convention** - all files are named **multi_get_X_Y_Z.log**. **X** the number of multi get keys 1, 3, 6, 9. **Y** - memtier or middleware instance's number. **Z** - repetition's number.
+**Naming convention** - all files are named **multi_get_X_Y_Z.log**. **X** the number of multi get keys 1, 3, 6, 9. **Y** - repetition's number. **Z** - memtier or middleware instance's number.
 
 #### Section 6, 2k experiment
 
