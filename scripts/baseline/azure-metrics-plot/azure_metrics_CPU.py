@@ -16,12 +16,14 @@ with open(file_path) as csvfile:
 
 #x = [a for a in range(len(data))]
 
-plt.plot(data)
+plt.plot(data, color='blue', alpha=0.8)
 plt.ylim(ymax=100)
 plt.ylim(ymin=0)
 plt.xlim(xmin=0)
 
 plt.xlabel('Time')
 plt.ylabel('CPU %')
+plt.title("CPU load during the experiments")
 
-plt.show()
+plt.savefig("baseline_azure_CPU.png")
+

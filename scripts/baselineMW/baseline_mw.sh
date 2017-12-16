@@ -3,7 +3,7 @@
 function create_out_dirs_clients() {
     for i in "${workers[@]}";
     do
-        MKDIR_CMD="mkdir -p ${LOG_FILE_DIR_SINGLE_SET_CLIENT}/${i} ${LOG_FILE_DIR_SINGLE_GET_CLIENT}/${i} ${LOG_FILE_DIR_DOUBLE_SET_CLIENT}/${i} ${LOG_FILE_DIR_DOUBLE_GET_CLIENT}/${i}"
+        MKDIR_CMD="mkdir -p ${LOG_FILE_DIR_SINGLE_SET_CLIENT}/${i} ${LOG_FILE_DIR_SINGLE_GET_CLIENT}/${i} ${LOG_FILE_DIR_DOUBLE_SET_CLIENT}/${i} ${LOG_FILE_DIR_DOUBLE_GET_CLIENT}/${i} ${LOG_FILE_DIR_DOUBLE_SET_CLIENT_ADD}/${i} ${LOG_FILE_DIR_DOUBLE_GET_CLIENT_ADD}/${i}"
         ssh ${user}@${client1} ${MKDIR_CMD}
         ssh ${user}@${client2} ${MKDIR_CMD}
     done
@@ -12,7 +12,7 @@ function create_out_dirs_clients() {
 function create_out_dirs_mw() {
     for i in "${workers[@]}";
     do
-        MKDIR_CMD="mkdir -p ${LOG_FILE_DIR_SINGLE_SET_MW}/${i} ${LOG_FILE_DIR_SINGLE_GET_MW}/${i} ${LOG_FILE_DIR_DOUBLE_SET_MW}/${i} ${LOG_FILE_DIR_DOUBLE_GET_MW}/${i}"
+        MKDIR_CMD="mkdir -p ${LOG_FILE_DIR_SINGLE_SET_MW}/${i} ${LOG_FILE_DIR_SINGLE_GET_MW}/${i} ${LOG_FILE_DIR_DOUBLE_SET_MW}/${i} ${LOG_FILE_DIR_DOUBLE_GET_MW}/${i} ${LOG_FILE_DIR_DOUBLE_SET_MW_ADD}/${i} ${LOG_FILE_DIR_DOUBLE_GET_MW_ADD}/${i}"
         ssh ${user}@${middleware1} ${MKDIR_CMD}
         ssh ${user}@${middleware2} ${MKDIR_CMD}
     done
@@ -74,3 +74,7 @@ LOG_FILE_DIR_SINGLE_GET_MW="logfiles_baselineMW_single_GET_MW"
 LOG_FILE_DIR_DOUBLE_SET_MW="logfiles_baselineMW_double_SET_MW"
 LOG_FILE_DIR_DOUBLE_GET_MW="logfiles_baselineMW_double_GET_MW"
 
+LOG_FILE_DIR_DOUBLE_SET_CLIENT_ADD="logfiles_baselineMW_double_SET_client_ADD"
+LOG_FILE_DIR_DOUBLE_GET_CLIENT_ADD="logfiles_baselineMW_double_GET_client_ADD"
+LOG_FILE_DIR_DOUBLE_SET_MW_ADD="logfiles_baselineMW_double_SET_MW_ADD"
+LOG_FILE_DIR_DOUBLE_GET_MW_ADD="logfiles_baselineMW_double_GET_MW_ADD"

@@ -56,7 +56,7 @@ class ExperimentPlotter:
 
         file.close()
 
-        print(logfile)
+        #print(logfile)
         return float(avg_throughput), float(avg_response_time)
 
     def extractParams(self, logfile):
@@ -68,7 +68,7 @@ class ExperimentPlotter:
 
         file.close()
 
-        print(logfile)
+        #print(logfile)
         return float(avg_throughput), float(avg_response_time)
 
     def plot_baseline_aggregate(self, filename1, filename2):
@@ -80,11 +80,10 @@ class ExperimentPlotter:
 
         if self.INSIDE_MW:
             MACHINES_RANGE = self.MW_NUMBER
+            print("Plotting on the MW")
         else:
-            if self.MACHINES_NUMBER != 1:
-                MACHINES_RANGE = self.MACHINES_NUMBER * self.THREAD_PER_CLIENT
-            else:
-                MACHINES_RANGE = self.MACHINES_NUMBER
+            MACHINES_RANGE = self.MACHINES_NUMBER
+            print("Plotting on the Clients")
 
         for worker in self.WORKERS_RANGE:
             # Build
@@ -118,7 +117,7 @@ class ExperimentPlotter:
                         # AVG response times
                         avg_response_time += response
 
-                    avg_response_time /= self.MACHINES_NUMBER
+                    avg_response_time /= MACHINES_RANGE
                     # at this point we have aggregates from all machines
                     final_throughput += aggregate_throughput
                     final_response_time += avg_response_time
@@ -154,7 +153,11 @@ class ExperimentPlotter:
             ticks = [x * self.THREAD_PER_CLIENT * self.MACHINES_NUMBER for x in range(self.CLIENTS_RANGE_BEG, self.CLIENTS_RANGE_END + 1, self.CLIENTS_RANGE_STEP)]
 
             # throughput
+            print(T)
             plt.figure(1)
+            print("WORKERS # {} MAX Throuthput {}".format(self.WORKERS_RANGE[i], max(T)))
+            print("")
+
             #plt.title("Throughput graph")
             p = plt.errorbar(clients, T, yerr=T_STD, fmt=markers[i], ecolor='r', color=colors[i])
             legends.append(p)
@@ -182,6 +185,9 @@ class ExperimentPlotter:
 
             # response time
             plt.figure(2)
+            print(R)
+            print("WORKERS # {} MAX Response {}".format(self.WORKERS_RANGE[i], max(R)))
+            print("")
 
             p = plt.errorbar(clients, R, yerr=R_STD, fmt=markers[i], ecolor='r', color=colors[i])
             legends.append(p)
@@ -200,54 +206,6 @@ class ExperimentPlotter:
         plt.gcf().clear()
 
 
-
-# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_single_SET_MW/"
-# plotter = ExperimentPlotter()
-# plotter.INSIDE_MW = False
-# plotter.set_params(3, path, 1, 2, 60, [1, 33, 4])
-# plotter.plot_baseline_aggregate("baselineClient_get_agr_T.png","baselineClient_get_agr_R.png")
-
-#path = "/home/ivan/asl-fall17-project/scripts/baselineMW/single/logfiles_baselineMW_single_GET_MW"
-# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_single_SET_MW"
-# plotter = ExperimentPlotter()
-# plotter.INSIDE_MW = True
-# plotter.set_params(3, path, 1, 2, [1, 33, 4])
-# plotter.plot_baseline_aggregate("baselineMW_set_agr_T.png","baselineMW_set_agr_R.png")
-#
-# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_single_SET_client"
-# plotter = ExperimentPlotter()
-# plotter.INSIDE_MW = False
-# plotter.set_params(3, path, 1, 2, [1, 33, 4])
-# plotter.plot_baseline_aggregate("baselineMWClient_set_agr_T.png","baselineMWClient_set_agr_R.png")
-
-# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_single_GET_MW"
-# plotter = ExperimentPlotter()
-# plotter.INSIDE_MW = True
-# plotter.set_params(3, path, 1, 2, [1, 33, 4])
-# plotter.plot_baseline_aggregate("baselineMW_get_agr_T.png","baselineMW_get_agr_R.png")
-
-# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_single_GET_client"
-# plotter = ExperimentPlotter()
-# plotter.INSIDE_MW = False
-# plotter.set_params(3, path, 1, 2, [1, 33, 4])
-# plotter.plot_baseline_aggregate("baselineMWClient_get_agr_T.png","baselineMWClient_get_agr_R.png")
-
-# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_double_GET_MW"
-# plotter = ExperimentPlotter()
-# plotter.INSIDE_MW = True
-# plotter.set_params(3, path, 2, 1, [1, 33, 4])
-# plotter.plot_baseline_aggregate("double_baselineMW_get_agr_T.png","double_baselineMW_get_agr_R.png")
-
-# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_double_GET_client"
-# plotter = ExperimentPlotter()
-# plotter.INSIDE_MW = False
-# plotter.set_params(3, path, 2, 1, [1, 33, 4])
-# plotter.plot_baseline_aggregate("double_baselineMWClient_get_agr_T.png","double_baselineMWClient_get_agr_R.png")
-
-
-
-
-
 # FINAL commands
 
 # path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_single_GET_client"
@@ -263,14 +221,46 @@ class ExperimentPlotter:
 # plotter.plot_baseline_aggregate("baselineMW_get_agr_T.png","baselineMW_get_agr_R.png")
 
 
-path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_double_GET_client"
+# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_double_GET_client"
+# plotter = ExperimentPlotter()
+# plotter.INSIDE_MW = False
+# plotter.set_params(3, path, 2, 1, 2, [1, 33, 4])
+# plotter.plot_baseline_aggregate("double_baselineMWClient_get_agr_T.png","double_baselineMWClient_get_agr_R.png")
+#
+# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_double_GET_MW"
+# plotter = ExperimentPlotter()
+# plotter.INSIDE_MW = True
+# plotter.set_params(3, path, 2, 1, 2, [1, 33, 4])
+# plotter.plot_baseline_aggregate("double_baselineMW_get_agr_T.png","double_baselineMW_get_agr_R.png")
+
+# DOUBLE ADD
+
+# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_double_GET_client_ADD"
+# plotter = ExperimentPlotter()
+# plotter.INSIDE_MW = False
+# plotter.set_params(3, path, 4, 1, 2, [1, 33, 4])
+# plotter.WORKERS_RANGE=[64]
+# plotter.plot_baseline_aggregate("ADD_double_baselineMWClient_get_agr_T.png","ADD_double_baselineMWClient_get_agr_R.png")
+#
+# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_double_GET_MW_ADD"
+# plotter = ExperimentPlotter()
+# plotter.INSIDE_MW = True
+# plotter.set_params(3, path, 4, 1, 2, [1, 33, 4])
+# plotter.WORKERS_RANGE=[64]
+# plotter.plot_baseline_aggregate("ADD_double_baselineMW_get_agr_T.png","ADD_double_baselineMW_get_agr_R.png")
+
+# REDO GET DOUBLE
+#
+path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/redoGET/logfiles_baselineMW_double_GET_client"
 plotter = ExperimentPlotter()
 plotter.INSIDE_MW = False
+plotter.WORKERS_RANGE = [64]
 plotter.set_params(3, path, 2, 1, 2, [1, 33, 4])
-plotter.plot_baseline_aggregate("double_baselineMWClient_get_agr_T.png","double_baselineMWClient_get_agr_R.png")
+plotter.plot_baseline_aggregate("redo_double_baselineMWClient_get_agr_T.png","redo_double_baselineMWClient_get_agr_R.png")
 
-path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/logfiles_baselineMW_double_GET_MW"
+path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/redoGET/logfiles_baselineMW_double_GET_MW"
 plotter = ExperimentPlotter()
 plotter.INSIDE_MW = True
+plotter.WORKERS_RANGE = [64]
 plotter.set_params(3, path, 2, 1, 2, [1, 33, 4])
-plotter.plot_baseline_aggregate("double_baselineMW_get_agr_T.png","double_baselineMW_get_agr_R.png")
+plotter.plot_baseline_aggregate("redo_double_baselineMW_get_agr_T.png","redo_double_baselineMW_get_agr_R.png")

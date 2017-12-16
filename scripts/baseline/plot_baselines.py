@@ -3,6 +3,7 @@ import sys
 from operator import add
 from matplotlib import pyplot as plt
 from statistics import stdev
+import operator
 
 class ExperimentPlotter:
 
@@ -232,23 +233,33 @@ class ExperimentPlotter:
         #print(T_STD)
 
         # throughput
+
+        print(T_total)
+        index, value = max(enumerate(T_total), key=operator.itemgetter(1))
+        print(clients[index])
+        print(value)
+
         plt.figure(1)
         plt.title("Throughput")
-        plt.errorbar(clients, T_total, yerr=T_STD, fmt='-o', ecolor='r')
+        plt.errorbar(clients, T_total, yerr=T_STD, fmt='-x', ecolor='r', color='blue', capsize=2, elinewidth=0.5, alpha=0.8)
         plt.xticks(ticks)
         plt.ylim(ymin=0)
         plt.xlim(xmin=0)
         plt.grid()
         plt.xlabel('NumClients')
         plt.ylabel('Throughput (ops/sec)')
+        plt.legend()
         #plt.show()
         plt.savefig(filename1)
         plt.gcf().clear()
 
         # response time
+        print(R_total)
+        print(max(R_total))
+
         plt.figure(2)
         plt.title("Response time")
-        plt.errorbar(clients, R_total, yerr=R_STD, fmt='-o', ecolor='r')
+        plt.errorbar(clients, R_total, yerr=R_STD, fmt='-x', ecolor='r', color='blue', capsize=2, elinewidth=0.5, alpha=0.8)
         plt.xticks(ticks)
         plt.ylim(ymin=0)
         plt.xlim(xmin=0)
@@ -256,6 +267,7 @@ class ExperimentPlotter:
         plt.xlabel('NumClients')
         plt.ylabel('Response time (msec)')
         #plt.show()
+        plt.legend()
         plt.savefig(filename2)
         plt.gcf().clear()
 
@@ -264,14 +276,14 @@ class ExperimentPlotter:
 
 # path_GET1 = "/home/ivan/asl-fall17-project/experiments/logfiles/baseline/logfiles_baseline_1_server_GET"
 # path_SET1 = "/home/ivan/asl-fall17-project/experiments/logfiles/baseline/logfiles_baseline_1_server_SET"
-# path_GET2 = "/home/ivan/asl-fall17-project/experiments/logfiles/baseline/logfiles_baseline_2_servers_GET"
+path_GET2 = "/home/ivan/asl-fall17-project/experiments/logfiles/baseline/logfiles_baseline_2_servers_GET"
 # path_SET2 = "/home/ivan/asl-fall17-project/experiments/logfiles/baseline/logfiles_baseline_2_servers_SET"
 
-# plotter = ExperimentPlotter()
+plotter = ExperimentPlotter()
 # plotter.set_params(3, path_SET1, 3, 2, 60, [1, 33, 4])
 # plotter.plot_baseline_aggregate("baseline_set1_agr_T.png","baseline_set1_agr_R.png")
 # plotter.plot_baseline_breakdown("baseline_set1_sep_T.png","baseline_set1_sep_R.png")
-#
+
 # plotter.set_params(3, path_GET1, 3, 2, 60, [1, 33, 4])
 # plotter.plot_baseline_aggregate("baseline_get1_agr_T.png","baseline_get1_agr_R.png")
 # plotter.plot_baseline_breakdown("baseline_get1_sep_T.png","baseline_get1_sep_R.png")
@@ -279,8 +291,8 @@ class ExperimentPlotter:
 # plotter.set_params(3, path_SET2, 2, 1, 60, [1, 33, 4])
 # plotter.plot_baseline_aggregate("baseline_set2_agr_T.png","baseline_set2_agr_R.png")
 # plotter.plot_baseline_breakdown("baseline_set2_sep_T.png","baseline_set2_sep_R.png")
-#
-# plotter.set_params(3, path_GET2, 2, 1, 60, [1, 33, 4])
-# plotter.plot_baseline_aggregate("baseline_get2_agr_T.png","baseline_get2_agr_R.png")
-# plotter.plot_baseline_breakdown("baseline_get2_sep_T.png","baseline_get2_sep_R.png")
+
+plotter.set_params(3, path_GET2, 2, 1, 60, [1, 33, 4])
+plotter.plot_baseline_aggregate("baseline_get2_agr_T.png","baseline_get2_agr_R.png")
+plotter.plot_baseline_breakdown("baseline_get2_sep_T.png","baseline_get2_sep_R.png")
 

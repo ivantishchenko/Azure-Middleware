@@ -12,6 +12,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Stream;
 
 public class Worker extends Thread {
     // Logging
@@ -47,6 +48,7 @@ public class Worker extends Thread {
     private String logName;
 
     private String[] serverResponsesGlue;
+    private ByteBuffer[] byteBuffersGlue;
 
     public Worker(LinkedBlockingQueue<Request> reqQueue, CycleCounter counter, List<String> memCachedServers) {
         // params
@@ -83,10 +85,21 @@ public class Worker extends Thread {
         for (int i = 0; i < serverResponsesGlue.length; i++) {
             serverResponsesGlue[i] = "";
         }
+
+        byteBuffersGlue = new ByteBuffer[serversNumber];
+        for (int i = 0; i < byteBuffersGlue.length; i++) {
+            byteBuffersGlue[i] = ByteBuffer.allocate(MESSAGE_SIZE);
+            byteBuffersGlue[i].limit(MESSAGE_SIZE);
+        }
+
+
+        for (int i = 0; i < serversNumber; i++) {
+            statistics.getEqualLoadHistogram().put(i, 0);
+        }
+
     }
 
     private void openServerConnections() throws IOException {
-        selector = Selector.open();
 
         for (String mcAddress: servers) {
             String serverIP = mcAddress.split(":")[0];
@@ -94,10 +107,8 @@ public class Worker extends Thread {
 
             SocketChannel chan = SocketChannel.open();
             serverSocketChannels.add(chan);
-            chan.configureBlocking(false);
+            chan.configureBlocking(true);
             chan.connect(new InetSocketAddress(serverIP, serverPort));
-            chan.register(this.selector, SelectionKey.OP_READ);
-
             // wait until all connections are open
             while (!chan.finishConnect()) {
                 continue;
@@ -106,7 +117,7 @@ public class Worker extends Thread {
 
     }
 
-    private void writeOne(Request request) {
+    private int writeOne(Request request) {
         responsesLeft = 0;
 
         int serverIdx = roundRobinCounter.getCount();
@@ -114,7 +125,7 @@ public class Worker extends Thread {
 
         buffer.clear();
 
-//        System.out.println(Thread.currentThread().getId() + " Going to send Request to Server: " + new String(request.getRawMessage()));
+        //System.out.println(Thread.currentThread().getId() + " Going to send Request to Server: " + new String(request.getRawMessage()));
         log.info(Thread.currentThread().getId() + " Going to send: " + new String(request.getRawMessage()));
         buffer.put(request.getRawMessage());
         buffer.flip();
@@ -130,6 +141,10 @@ public class Worker extends Thread {
 
         roundRobinCounter.increment();
         responsesLeft++;
+
+        statistics.getEqualLoadHistogram().put(serverIdx, statistics.getEqualLoadHistogram().get(serverIdx) + 1);
+
+        return serverIdx;
     }
 
     private void writeAll(Request request) {
@@ -140,6 +155,7 @@ public class Worker extends Thread {
             // Replicate to all Servers
             for (SocketChannel serverChannel: serverSocketChannels) {
                 buffer.clear();
+                //System.out.println(Thread.currentThread().getId() + " Going to send to server: " + new String(request.getRawMessage()));
                 log.info(Thread.currentThread().getId() + " Going to send: " + new String(request.getRawMessage()));
                 buffer.put(request.getRawMessage());
                 buffer.flip();
@@ -167,6 +183,8 @@ public class Worker extends Thread {
             // Loop over non empty splits
             for (int i = 0; i < splitRequests.size(); i++) {
 
+                statistics.getEqualLoadHistogram().put(i, statistics.getEqualLoadHistogram().get(i) + 1);
+
                 byte[] out = splitRequests.get(i);
                 log.info(Thread.currentThread().getId() + " Going to send: " + new String(out));
 
@@ -189,13 +207,11 @@ public class Worker extends Thread {
 
     }
 
-    private void read(SelectionKey key, Request r) throws IOException {
-        SocketChannel channel = (SocketChannel) key.channel();
+    private void read(SocketChannel channel, Request r) throws IOException {
         buffer.clear();
         int numBytesRead = channel.read(buffer);
 
         if (numBytesRead == -1) {
-            key.cancel();
             channel.close();
             buffer.clear();
         } else {
@@ -274,7 +290,7 @@ public class Worker extends Thread {
             if ( checkString.contains("END\r\n") ) {
 
                 serverResponsesGlue[idx] += checkString;
-                System.out.println("GLUED RESPONSE " + serverResponsesGlue[idx]);
+                //System.out.println("GLUED RESPONSE " + serverResponsesGlue[idx]);
                 serverResponses.add(ByteBuffer.wrap(serverResponsesGlue[idx].getBytes()));
 
                 if (MiddlewareMain.sharedRead && r.getType() == Request.RequestType.MULTI_GET) {
@@ -296,6 +312,28 @@ public class Worker extends Thread {
 
         log.info("Reply from: " + addr);
 
+    }
+
+    private byte[] readAll(int serverIdx) {
+        byte[] msg;
+        String checkString;
+        int totalRead = 0;
+        do {
+            //System.out.println("GOIN TO READ");
+            int numBytesRead = 0;
+            try {
+                numBytesRead = serverSocketChannels.get(serverIdx).read(byteBuffersGlue[serverIdx]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            totalRead += numBytesRead;
+            //System.out.println("Num bytes READ " + numBytesRead);
+            msg = new byte[totalRead];
+            System.arraycopy(byteBuffersGlue[serverIdx].array(), 0, msg, 0, totalRead);
+            checkString = new String(msg);
+            //System.out.println("Glued response : " + checkString);
+        } while (!checkString.contains("END\r\n"));
+        return msg;
     }
 
     @Override
@@ -326,19 +364,19 @@ public class Worker extends Thread {
                 statistics.setQueueLength(jobQueue.size());
 
                 // send a job to servers
-
+                int serverIdx = 0;
                 switch (request.getType()) {
                     case SET:
                         writeAll(request);
                         statistics.setSETCount(statistics.getSETCount() + 1);
                         break;
                     case GET:
-                        writeOne(request);
+                        serverIdx = writeOne(request);
                         statistics.setGETCount(statistics.getGETCount() + 1);
                         break;
                     case MULTI_GET:
                         if (MiddlewareMain.sharedRead) writeSplit(request, serversNumber);
-                        else writeOne(request);
+                        else serverIdx = writeOne(request);
                         statistics.setMULTIGETCount(statistics.getMULTIGETCount() + 1);
                         break;
                     case UNSUPPORTED:
@@ -352,88 +390,90 @@ public class Worker extends Thread {
 
                 // block until there is something to read
                 // wait for all responses
-                while ( responsesLeft > 0 ) {
-                    selector.select();
-                    Set<SelectionKey> keys = selector.selectedKeys();
-                    Iterator<SelectionKey> it = keys.iterator();
-                    while (it.hasNext()) {
+                int numBytesRead = 0;
+                //System.out.println("TYPE is " + request.getType());
+                switch (request.getType()) {
+                    case SET:
+                        Set<ByteBuffer> setResponses = new HashSet<>();
+                        for (int i = 0; i < serversNumber; i++) {
+                            numBytesRead = serverSocketChannels.get(i).read(byteBuffersGlue[i]);
 
-                        SelectionKey key = it.next();
+                            //byte[] message = new byte[numBytesRead];
+                            //System.arraycopy(byteBuffersGlue[i].array(), 0, message, 0, numBytesRead);
 
-
-                        if (key.isReadable()) {
-                            // if there are GETs glue them
-                            if ( request.getType() == Request.RequestType.MULTI_GET ) {
-                                readGet(key, request);
-                            }
+                            if (numBytesRead == -1) serverSocketChannels.get(i).close();
                             else {
-                                read(key, request);
+                                setResponses.add(byteBuffersGlue[i]);
+
+                                byte[] message = new byte[numBytesRead];
+                                System.arraycopy(byteBuffersGlue[i].array(), 0, message, 0, numBytesRead);
+                                String checkStr = new String(message);
+                                if (checkStr.toLowerCase().contains("error")) {
+                                    serverIdx = i;
+                                }
                             }
+
+                            //System.out.println("REPLY IS = " + new String(message));
+
                         }
-                        it.remove();
-
-                        // reply to client
-                        if ( responsesLeft == 0 ) {
-
-                            long endServiceTime = System.nanoTime();
-                            //System.out.println("Set size: " + serverResponses.size());
-                            buffer.clear();
-                            // forward the first response to client
-
-                            switch (request.getType()) {
-                                case SET:
-                                    buffer.put(Parser.getSingleResponse(serverResponses));
-                                    break;
-                                case GET:
-                                    buffer.put(serverResponses.iterator().next());
-                                    break;
-                                case MULTI_GET:
-                                    if (MiddlewareMain.sharedRead) {
-                                        byte[] out = Parser.combineSplitResponses(sharedResponces);
-                                        buffer.put(out);
-                                    }
-                                    else {
-                                        //System.out.println("Sending back to client " + new String(serverResponses.iterator().next().array()));
-                                        buffer.put(serverResponses.iterator().next());
-                                    }
-                                    break;
-                                default:
-                                    break;
-                            }
-
-                            buffer.flip();
-
-                            while (buffer.hasRemaining()) {
-                                request.getRequestChan().write(buffer);
-                            }
-
-                            buffer.clear();
-
-                            // CLEAR RESPONSES AFTER GET!!!
-                            serverResponses.clear();
-                            // shared responces clear!!!!
-                            if (MiddlewareMain.sharedRead && request.getType() == Request.RequestType.MULTI_GET) {
-                                for (int i = 0; i < serversNumber; i++) sharedResponces.set(i, "".getBytes());
-                            }
-                            cleanGlueResponses();
-
-                            // instrumentation
-                            long serviceTime = endServiceTime - startServiceTime;
-                            statistics.setServiceTime(statistics.getServiceTime() + serviceTime);
-                            // repsonse time histrogram
+                        break;
+                    case GET:
+                        numBytesRead = serverSocketChannels.get(serverIdx).read(byteBuffersGlue[serverIdx]);
+                        if ( numBytesRead == -1 ) serverSocketChannels.get(serverIdx).close();
+                        else {
+                            byte[] message = new byte[numBytesRead];
+                            System.arraycopy(byteBuffersGlue[serverIdx].array(), 0, message, 0, numBytesRead);
+                            if (Parser.isEmptyResponse(message)) statistics.setCacheMissCount(statistics.getCacheMissCount() + 1);
                         }
+                        break;
+                    case MULTI_GET:
+                        if (MiddlewareMain.sharedRead) {
+                            ArrayList<byte[]> responses= new ArrayList<>();
+                            for (int i = 0; i < serversNumber; i++) {
+                                byte[] msg = readAll(i);
+                                responses.add(msg);
 
-                    }
-                    // wait for responses from all servers
-                    // use a semaphore to check the completion of requests
+                            }
+                            byte[] out = Parser.combineSplitResponses(responses);
+                            byteBuffersGlue[serverIdx].clear();
+                            byteBuffersGlue[serverIdx].put(out);
+                        }
+                        else {
+                            readAll(serverIdx);
+                        }
+                        break;
+                    default:
+                        break;
                 }
 
+
+                // reply to client
+                //System.out.println("0 RESPONSES");
+                long endServiceTime = System.nanoTime();
+                // instrumentation
+                long serviceTime = endServiceTime - startServiceTime;
+                statistics.setServiceTime(statistics.getServiceTime() + serviceTime);
+
+
+                //byte[] msg = new byte[numBytesRead];
+                //System.arraycopy(byteBuffersGlue[serverIdx].array(), 0, msg, 0, numBytesRead);
+                //System.out.println("TO CLIENT " + new String(msg));
+                byteBuffersGlue[serverIdx].flip();
+
+                while (byteBuffersGlue[serverIdx].hasRemaining()) {
+                    request.getRequestChan().write(byteBuffersGlue[serverIdx]);
+                }
+
+                for (int i = 0; i < serversNumber ; i++) {
+                    byteBuffersGlue[i].clear();
+                }
+
+                // repsonse time histrogram
                 long sendBackClientTime = System.nanoTime();
                 long responseTime = sendBackClientTime - request.getEnterQueueTime();
 
                 statistics.addResponseTime(responseTime);
                 statistics.setLatency(statistics.getLatency() + responseTime);
-
             }
 
         } catch (IOException e) {

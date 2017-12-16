@@ -1,6 +1,7 @@
 package ch.ethz.asl.main;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 // Statistics object for instrumentation
@@ -27,6 +28,8 @@ public class Statistics {
     private long latency;
 
     private int cacheMissCount;
+    // server number of requests send to server
+    private HashMap<Integer, Integer> equalLoadHistogram;
 
     public Statistics(String name, int throughput, int queueLength, long queueWaitTime, long serviceTime, int SETCount, int GETCount, int MULTIGETCount, long latency) {
         this.workerName = name;
@@ -39,6 +42,7 @@ public class Statistics {
         this.MULTIGETCount = MULTIGETCount;
         this.latency = latency;
         this.cacheMissCount = 0;
+        this.equalLoadHistogram = new HashMap<>();
     }
 
     public Statistics(String name, int throughput, int queueLength, long queueWaitTime, long serviceTime, int SETCount, int GETCount, int MULTIGETCount, List<Long> times) {
@@ -52,6 +56,7 @@ public class Statistics {
         this.MULTIGETCount = MULTIGETCount;
         this.responseTimesList = times;
         this.cacheMissCount = 0;
+        this.equalLoadHistogram = new HashMap<>();
     }
 
     public Statistics() {
@@ -66,7 +71,17 @@ public class Statistics {
         latency = 0;
         responseTimesList = new ArrayList<>();
         cacheMissCount = 0;
+        this.equalLoadHistogram = new HashMap<>();
     }
+
+    public HashMap<Integer, Integer> getEqualLoadHistogram() {
+        return equalLoadHistogram;
+    }
+
+    public void setEqualLoadHistogram(HashMap<Integer, Integer> equalLoadHistogram) {
+        this.equalLoadHistogram = equalLoadHistogram;
+    }
+
 
     public int getCacheMissCount() {
         return cacheMissCount;

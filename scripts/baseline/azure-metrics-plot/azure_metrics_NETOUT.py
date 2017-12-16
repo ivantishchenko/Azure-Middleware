@@ -18,12 +18,13 @@ with open(file_path) as csvfile:
 
 data = [x / 10**6 for x in data]
 
-plt.plot(data)
+plt.plot(data, color='blue', alpha=0.8)
 plt.ylim(ymax=max(data))
 plt.ylim(ymin=0)
 plt.xlim(xmin=0)
 
 plt.xlabel('Time')
 plt.ylabel('Network OUT MBytes')
+plt.title("Network output load during the experiments")
 
-plt.show()
+plt.savefig("baseline_azure_NETOUT.png")

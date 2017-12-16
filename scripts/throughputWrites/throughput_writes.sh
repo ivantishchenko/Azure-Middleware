@@ -75,13 +75,13 @@ LOG_FILE_DIR_MW="logfiles_throughputWrites_MW"
 LOG_FILE_DIR_Client="logfiles_throughputWrites_Client"
 
 
-#create_out_dirs_mw
-#create_out_dirs_clients
+create_out_dirs_mw
+create_out_dirs_clients
 
 # launch MEMCACHED
-#ssh -f ${user}@${server1} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
-#ssh -f ${user}@${server2} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
-#ssh -f ${user}@${server3} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
+ssh -f ${user}@${server1} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
+ssh -f ${user}@${server2} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
+ssh -f ${user}@${server3} "sh -c '${server_cmd} > /dev/null 2>&1 &'"
 
 # repeat W times
 for w in "${workers[@]}";
