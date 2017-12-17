@@ -76,7 +76,7 @@ The logfiles which were used in the report:
 
 #### Section 3, Baseline with middleware.
 
-**Location:** experiments/logfiles/baselineMiddleware
+**Location:** experiments/logfiles/baselineMiddleware/redoFinal
 
 **pings** - pings from the setting
 
@@ -157,3 +157,39 @@ For the middleware files the convention is **throughputWrites_X_Y_Z.log**, **X**
 **logfiles_2k_MIX_MW** - write-read, MW measurements
 
 **Naming convention** - all files have the format **2k_A_B_C_D_E.log**, where **A** - number of servers, **B** - number of middlewares, C - number of threads, **D** - repetition's number, **C** - memtier or middleware instance's number 
+
+#### Section 7, Modeling
+
+##### Section 7.1, M/M/1
+
+**Location:** experiments/logfiles/throughputWrites
+
+**logfiles_throughputWrites_MW** - measurements from the MW
+
+**Naming convention** each directory has **8, 16, 32, 64** subdirectories corresponding to WT. For the middleware files the convention is **throughputWrites_X_Y_Z.log**, **X** -number of VC. **Y** - repetition's number. **Z** - middleware instance's number.
+
+
+##### Section 7.2, M/M/m
+
+**Location:** experiments/logfiles/throughputWrites
+
+**logfiles_throughputWrites_MW** - measurements from the MW
+
+**Naming convention** each directory has **8, 16, 32, 64** subdirectories corresponding to WT. For the middleware files the convention is **throughputWrites_X_Y_Z.log**, **X** -number of VC. **Y** - repetition's number. **Z** - middleware instance's number.
+
+
+##### Section 7.3, Network of queues
+
+**Location:** experiments/logfiles/baselineMiddleware
+
+**pings** - pings from the setting
+
+**logfiles_baselineMW_single_GET_MW** - read only, 1 middleware, MW measurements
+
+**logfiles_baselineMW_single_SET_MW** - write only, 1 middleware, MW measurements
+
+**logfiles_baselineMW_double_GET_MW** - read only, 2 middleware, MW measurements
+
+**logfiles_baselineMW_double_SET_MW** - write only, 2 middleware, MW measurements
+
+**Naming convention** each directory has **8, 16, 32, 64** subdirectories corresponding to WT. For the middleware files the convention is **baselineMW_X_Y_Z.log**, **X** -number of VC, **Y** - repetition's number, **Z** - middleware instance's number.

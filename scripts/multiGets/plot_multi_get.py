@@ -100,7 +100,9 @@ class ExperimentPlotter:
         #print(T_total)
         #print(T_STD)
 
-        throughput
+        print("Throughput")
+        print(T_total)
+
         plt.figure(1)
         plt.title("Multigets")
         plt.errorbar(clients, T_total, yerr=T_STD, fmt='-o', ecolor='r', color='blue', capsize=2, elinewidth=0.5, alpha=0.8)
@@ -114,6 +116,8 @@ class ExperimentPlotter:
         plt.savefig(filename1)
         plt.gcf().clear()
 
+        print("Response time")
+        print(R_total)
         # response time
         plt.figure(2)
         plt.title("Multigets")
@@ -130,13 +134,14 @@ class ExperimentPlotter:
 
 
 # PLOTTING
-
+print("sharding")
 path = "/home/ivan/asl-fall17-project/experiments/logfiles/multiGets/logfiles_multiGET_shard_Client"
 
 plotter = ExperimentPlotter()
 plotter.set_params(3, path, 6, 1)
 plotter.plot_baseline_aggregate("shard_multi_get_T.png","shard_multi_get_R.png")
 
+print("non sharding")
 path = "/home/ivan/asl-fall17-project/experiments/logfiles/multiGets/logfiles_multiGET_nonshard_Client"
 
 plotter = ExperimentPlotter()

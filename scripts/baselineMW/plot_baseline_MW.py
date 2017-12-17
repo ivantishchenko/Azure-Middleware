@@ -251,16 +251,58 @@ class ExperimentPlotter:
 
 # REDO GET DOUBLE
 #
-path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/redoGET/logfiles_baselineMW_double_GET_client"
+# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/redoGET/logfiles_baselineMW_double_GET_client"
+# plotter = ExperimentPlotter()
+# plotter.INSIDE_MW = False
+# plotter.WORKERS_RANGE = [64]
+# plotter.set_params(3, path, 2, 1, 2, [1, 33, 4])
+# plotter.plot_baseline_aggregate("redo_double_baselineMWClient_get_agr_T.png","redo_double_baselineMWClient_get_agr_R.png")
+#
+# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/redoGET/logfiles_baselineMW_double_GET_MW"
+# plotter = ExperimentPlotter()
+# plotter.INSIDE_MW = True
+# plotter.WORKERS_RANGE = [64]
+# plotter.set_params(3, path, 2, 1, 2, [1, 33, 4])
+# plotter.plot_baseline_aggregate("redo_double_baselineMW_get_agr_T.png","redo_double_baselineMW_get_agr_R.png")
+
+## FINAL
+
+path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/redoFinal/logfiles_baselineMW_double_GET_client"
 plotter = ExperimentPlotter()
 plotter.INSIDE_MW = False
-plotter.WORKERS_RANGE = [64]
 plotter.set_params(3, path, 2, 1, 2, [1, 33, 4])
-plotter.plot_baseline_aggregate("redo_double_baselineMWClient_get_agr_T.png","redo_double_baselineMWClient_get_agr_R.png")
+plotter.plot_baseline_aggregate("final_double_baselineMWClient_get_agr_T.png","final_double_baselineMWClient_get_agr_R.png")
 
-path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/redoGET/logfiles_baselineMW_double_GET_MW"
+path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/redoFinal/logfiles_baselineMW_double_GET_MW"
 plotter = ExperimentPlotter()
 plotter.INSIDE_MW = True
-plotter.WORKERS_RANGE = [64]
 plotter.set_params(3, path, 2, 1, 2, [1, 33, 4])
-plotter.plot_baseline_aggregate("redo_double_baselineMW_get_agr_T.png","redo_double_baselineMW_get_agr_R.png")
+plotter.plot_baseline_aggregate("final_double_baselineMW_get_agr_T.png","final_double_baselineMW_get_agr_R.png")
+
+
+# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/redoFinal/logfiles_baselineMW_single_GET_client"
+# plotter = ExperimentPlotter()
+# plotter.INSIDE_MW = False
+# plotter.set_params(3, path, 1, 2, 1, [1, 33, 4])
+# plotter.plot_baseline_aggregate("final_baselineMWClient_get_agr_T.png","final_baselineMWClient_get_agr_R.png")
+#
+# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/redoFinal/logfiles_baselineMW_single_GET_MW"
+# plotter = ExperimentPlotter()
+# plotter.INSIDE_MW = True
+# plotter.set_params(3, path, 1, 2, 1, [1, 33, 4])
+# plotter.plot_baseline_aggregate("final_baselineMW_get_agr_T.png","final_baselineMW_get_agr_R.png")
+
+
+# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/redoFinal/logfiles_baselineMW_double_GET_client_ADD"
+# plotter = ExperimentPlotter()
+# plotter.INSIDE_MW = False
+# plotter.set_params(3, path, 4, 1, 2, [1, 33, 4])
+# plotter.WORKERS_RANGE=[64]
+# plotter.plot_baseline_aggregate("final_ADD_double_baselineMWClient_get_agr_T.png","final_ADD_double_baselineMWClient_get_agr_R.png")
+#
+# path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/redoFinal/logfiles_baselineMW_double_GET_MW_ADD"
+# plotter = ExperimentPlotter()
+# plotter.INSIDE_MW = True
+# plotter.set_params(3, path, 4, 1, 2, [1, 33, 4])
+# plotter.WORKERS_RANGE=[64]
+# plotter.plot_baseline_aggregate("final_ADD_double_baselineMW_get_agr_T.png","final_ADD_double_baselineMW_get_agr_R.png")

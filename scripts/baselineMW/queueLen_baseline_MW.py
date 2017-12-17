@@ -156,7 +156,7 @@ class ExperimentPlotter:
             # throughput
             print(T)
             plt.figure(1)
-            print("WORKERS # {} MAX Throuthput {}".format(self.WORKERS_RANGE[i], max(T)))
+            print("WORKERS # {} MAX QueueLen {}".format(self.WORKERS_RANGE[i], max(T)))
             print("")
 
             #plt.title("Throughput graph")
@@ -187,7 +187,7 @@ class ExperimentPlotter:
             # response time
             plt.figure(2)
             print(R)
-            print("WORKERS # {} MAX Response {}".format(self.WORKERS_RANGE[i], max(R)))
+            print("WORKERS # {} MAX Service time {}".format(self.WORKERS_RANGE[i], max(R)))
             print("")
 
             p = plt.errorbar(clients, R, yerr=R_STD, fmt=markers[i], ecolor='r', color=colors[i])
@@ -253,3 +253,18 @@ class ExperimentPlotter:
 # plotter.WORKERS_RANGE = [64]
 # plotter.set_params(3, path, 2, 1, 2, [1, 33, 4])
 # plotter.plot_baseline_aggregate("redo_double_baselineMW_get_agr_T.png","redo_double_baselineMW_get_agr_R.png")
+
+# FINAL
+
+path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/redoFinal/logfiles_baselineMW_single_GET_MW"
+plotter = ExperimentPlotter()
+plotter.INSIDE_MW = True
+plotter.set_params(3, path, 1, 2, 1, [1, 33, 4])
+plotter.plot_baseline_aggregate("final_queueLen_single_baselineMW_get_agr.png","final_serveTime_single_baselineMW_get_agr.png")
+
+
+path = "/home/ivan/asl-fall17-project/experiments/logfiles/baselineMiddleware/redoFinal/logfiles_baselineMW_double_GET_MW"
+plotter = ExperimentPlotter()
+plotter.INSIDE_MW = True
+plotter.set_params(3, path, 2, 1, 2, [1, 33, 4])
+plotter.plot_baseline_aggregate("final_queueLen_double_baselineMW_get_agr.png","final_serveTime_double_baselineMW_get_agr.png")
