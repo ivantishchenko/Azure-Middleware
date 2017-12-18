@@ -188,7 +188,7 @@ For the middleware files the convention is **throughputWrites_X_Y_Z.log**, **X**
 
 **logfiles_baselineMW_single_SET_MW** - write only, 1 middleware, MW measurements
 
-**logfiles_baselineMW_double_GET_MW** - read only, 2 middleware, MW measurements
+**redpGet/logfiles_baselineMW_double_GET_MW** - read only, 2 middleware, MW measurements
 
 **logfiles_baselineMW_double_SET_MW** - write only, 2 middleware, MW measurements
 
